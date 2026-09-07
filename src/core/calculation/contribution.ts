@@ -12,8 +12,15 @@ export function calculateContribution(
   quantities: QuantityContext,
 ): ContributionBreakdown {
   const pricing = calculatePricing(input.listPrice, input.adjustments, quantities);
+  const livePricing =
+    quantities.liveUnits !== undefined
+      ? calculatePricing(input.listPrice, input.adjustments, {
+          units: quantities.liveUnits,
+          orders: quantities.liveOrders ?? quantities.liveUnits,
+        })
+      : undefined;
   const hpp = input.hppPerUnit * quantities.units;
-  const fees = calculateFees(pricing, input.fees, quantities);
+  const fees = calculateFees(pricing, input.fees, quantities, livePricing);
   const costs = calculateCosts(input.costs, quantities);
 
   const contributionBeforeAds =

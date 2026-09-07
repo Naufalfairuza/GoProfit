@@ -100,10 +100,10 @@ function SavedCard({
 
       <div className="mt-5 flex items-center justify-between gap-3 border-t border-[var(--gp-border)] pt-4">
         <Link
-          href={item.kind === "PLAN" ? "/plan" : "/check"}
+          href={`${item.kind === "PLAN" ? "/plan" : "/check"}?restore=${encodeURIComponent(item.id)}`}
           className="text-sm font-bold text-[var(--gp-brand-primary)] hover:text-[var(--gp-brand-hover)]"
         >
-          Buat perhitungan baru →
+          Buka & restore →
         </Link>
         <button
           type="button"

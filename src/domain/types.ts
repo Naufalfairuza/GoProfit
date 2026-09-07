@@ -5,6 +5,7 @@ export type MarketplaceCode = "SHOPEE";
 
 export type FeeType = "PERCENTAGE" | "FIXED";
 export type FeeSource = "PRESET" | "CUSTOM";
+export type FeeAttribution = "ALL_SALES" | "SHOPEE_LIVE";
 export type CalculationBase =
   | "LIST_PRICE"
   | "AFTER_PRODUCT_DISCOUNT"
@@ -30,8 +31,11 @@ export interface ScenarioFee {
   feeType: FeeType;
   rateBps?: BasisPoints;
   fixedAmount?: Money;
+  /** Optional maximum fee for each sold unit. */
+  capAmountPerUnit?: Money;
   calculationBase: CalculationBase;
   scope: CostScope;
+  attribution?: FeeAttribution;
   source: FeeSource;
   active: boolean;
 }
@@ -76,6 +80,8 @@ export interface CampaignInput {
   orders: number;
   unitsSold: number;
   clicks?: number;
+  liveOrders?: number;
+  liveUnitsSold?: number;
 }
 
 export interface CheckAdsInput {
@@ -87,6 +93,8 @@ export interface CheckAdsInput {
 export interface QuantityContext {
   orders: number;
   units: number;
+  liveOrders?: number;
+  liveUnits?: number;
 }
 
 export interface PricingBreakdown {
@@ -178,7 +186,8 @@ export type CalculationWarningCode =
   | "NO_ORDERS"
   | "NO_MEDIA_AD_SPEND"
   | "ATTRIBUTED_DATA_ESTIMATE"
-  | "MULTI_UNIT_ORDER_ESTIMATE";
+  | "MULTI_UNIT_ORDER_ESTIMATE"
+  | "LIVE_ATTRIBUTION_ESTIMATE";
 
 export interface CalculationWarning {
   code: CalculationWarningCode;

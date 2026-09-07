@@ -29,6 +29,9 @@ yang dimasukkan seller berdasarkan rincian toko/programnya sendiri.
 - Input harga normal dan HPP/modal per unit.
 - Input diskon produk dan voucher seller.
 - Input biaya admin marketplace (%), biaya proses per order, dan biaya packing.
+- Pilihan program Shopee yang ditanggung seller: Gratis Ongkir XTRA, Shopee
+  Live XTRA, Promo XTRA, dan Promo XTRA+. Setiap program dapat diaktifkan,
+  diisi persentasenya, dan diberi batas biaya per unit bila berlaku.
 - Target profit dalam Rupiah/order, net margin, atau markup HPP.
 - Output profit sebelum iklan, ROAS BEP, BEP ACOS, max ads/order, dan minimum
   ROAS aman.
@@ -41,12 +44,15 @@ yang dimasukkan seller berdasarkan rincian toko/programnya sendiri.
 - Input ekonomi produk yang sama dengan produk pada campaign.
 - Input ad spend, GMV dari Ads, orders, units sold, clicks opsional, dan biaya
   iklan tambahan.
+- Jika Shopee Live XTRA aktif, input orders dan units yang teratribusi dari
+  Shopee Live agar biaya Live tidak dibebankan ke semua order campaign.
 - Output reported ROAS, Economic ROAS, reported/economic ACOS, CPA, CPC,
   estimated profit after ads, profit/order, diagnosis, dan warning scope data.
 
 ### Supporting MVP
 
 - Menyimpan snapshot perhitungan di localStorage browser tanpa login.
+- Membuka kembali snapshot Saved ke form Plan atau Check melalui fitur restore.
 - Halaman Learn untuk menjelaskan formula dan batasan interpretasi.
 - Responsive layout untuk desktop dan mobile.
 
@@ -55,6 +61,10 @@ yang dimasukkan seller berdasarkan rincian toko/programnya sendiri.
 - Harga efektif = harga normal − diskon produk − voucher/potongan seller.
 - Contribution sebelum iklan = harga efektif − HPP − marketplace fee − biaya
   operasional.
+- Fee program persentase = basis fee × rate; jika ada cap per unit, fee dibatasi
+  oleh cap × jumlah unit.
+- Shopee Live XTRA memakai basis penjualan yang teratribusi Live, dengan
+  referensi 3% atau 2% jika Promo XTRA/XTRA+ aktif, maksimal Rp20.000/unit.
 - ROAS BEP = harga efektif ÷ contribution sebelum iklan.
 - Minimum ROAS aman = harga efektif ÷ (contribution sebelum iklan − target profit).
 - Reported ROAS = GMV dari Ads ÷ media ad spend.
@@ -84,8 +94,9 @@ basis points untuk menghindari error floating point pada input.
 ## Next milestones
 
 1. Tambahkan preset fee versioned setelah sumber, effective date, basis,
-   eligibility, cap, dan rounding tiap fee diverifikasi.
-2. Tambahkan restore/edit dari Saved ke form kalkulator.
-3. Tambahkan platform adapter untuk Tokopedia/TikTok Shop dengan aturan fee
+   eligibility, cap, dan rounding tiap fee diverifikasi. Program Gratis Ongkir
+   XTRA dan Live XTRA tetap meminta input manual sampai tarif seller dapat
+   dipastikan.
+2. Tambahkan platform adapter untuk Tokopedia/TikTok Shop dengan aturan fee
    terpisah.
-4. Tambahkan export snapshot ke CSV/PDF setelah model data stabil.
+3. Tambahkan export snapshot ke CSV/PDF setelah model data stabil.

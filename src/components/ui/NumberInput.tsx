@@ -77,7 +77,7 @@ export function NumberInput({
             Math.trunc(parsed),
           );
         }}
-        className="min-h-12 w-full rounded-xl border border-[var(--gp-border)] bg-white px-4 text-sm font-semibold text-[var(--gp-text-primary)] outline-none transition placeholder:font-normal placeholder:text-[var(--gp-text-muted)] focus:border-[var(--gp-brand-primary)]"
+        className="min-h-12 w-full rounded-xl border border-[var(--gp-border)] bg-white px-4 text-sm font-semibold text-[var(--gp-text-primary)] outline-none transition placeholder:font-normal placeholder:text-[var(--gp-text-muted)] focus:border-[var(--gp-brand-primary)] focus:ring-4 focus:ring-[var(--gp-brand-soft)]"
       />
 
       {helperText && (

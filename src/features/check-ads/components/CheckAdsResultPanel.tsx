@@ -106,6 +106,8 @@ export function CheckAdsResultPanel({
           />
         </div>
 
+        <MetricGlossary />
+
         {hasAdditionalAdCost && (
           <div className="mt-4 rounded-xl bg-[var(--gp-brand-soft)] p-4">
             <p className="text-xs font-semibold">
@@ -133,8 +135,8 @@ export function CheckAdsResultPanel({
           title="Apa yang terjadi?"
         />
 
-        <div className="mt-5 space-y-4">
-          <FactRow
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <FactTile
             label="Contribution sebelum iklan"
             value={formatMoney(
               result.breakdown
@@ -142,14 +144,14 @@ export function CheckAdsResultPanel({
             )}
           />
 
-          <FactRow
+          <FactTile
             label="Total biaya iklan"
             value={formatMoney(
               result.totalAdvertisingCost,
             )}
           />
 
-          <FactRow
+          <FactTile
             label="Estimated profit setelah iklan"
             value={formatMoney(
               result.estimatedProfitAfterAds,
@@ -159,7 +161,7 @@ export function CheckAdsResultPanel({
 
           {result.targetProfitTotal !==
             undefined && (
-            <FactRow
+            <FactTile
               label="Target profit total"
               value={formatMoney(
                 result.targetProfitTotal,
@@ -167,28 +169,28 @@ export function CheckAdsResultPanel({
             />
           )}
 
-          <FactRow
+          <FactTile
             label="Reported ACOS"
             value={formatBps(
               result.reportedAcosBps,
             )}
           />
 
-          <FactRow
+          <FactTile
             label="Economic ACOS"
             value={formatBps(
               result.economicAcosBps,
             )}
           />
 
-          <FactRow
+          <FactTile
             label="CPC"
             value={formatOptionalMoney(
               result.cpc,
             )}
           />
 
-          <FactRow
+          <FactTile
             label="CPA"
             value={formatOptionalMoney(
               result.cpa,
@@ -260,64 +262,96 @@ export function CheckAdsResultPanel({
           title="Dari mana profitnya?"
         />
 
-        <div className="mt-5 space-y-3">
-          <FactRow
-            label="Pendapatan efektif"
-            value={formatMoney(
-              result.breakdown
-                .pricing
-                .effectiveRevenue,
-            )}
-          />
+        <div className="mt-5 space-y-5">
+          <div>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--gp-text-muted)]">
+              Ekonomi produk
+            </p>
 
-          <FactRow
-            label="HPP"
-            value={`-${formatMoneyPositive(
-              result.breakdown.hpp,
-            )}`}
-          />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <BreakdownTile
+                label="Pendapatan efektif"
+                value={formatMoney(
+                  result.breakdown
+                    .pricing
+                    .effectiveRevenue,
+                )}
+              />
 
-          <FactRow
-            label="Marketplace fee"
-            value={`-${formatMoneyPositive(
-              result.breakdown
-                .fees.total,
-            )}`}
-          />
+              <BreakdownTile
+                label="HPP"
+                value={`-${formatMoneyPositive(
+                  result.breakdown.hpp,
+                )}`}
+                negative
+              />
 
-          <FactRow
-            label="Biaya operasional"
-            value={`-${formatMoneyPositive(
-              result.breakdown
-                .costs.total,
-            )}`}
-          />
+              <BreakdownTile
+                label="Marketplace fee"
+                value={`-${formatMoneyPositive(
+                  result.breakdown
+                    .fees.total,
+                )}`}
+                negative
+              />
 
-          <FactRow
-            label="Contribution sebelum iklan"
-            value={formatMoney(
-              result.breakdown
-                .contributionBeforeAds,
-            )}
-            strong
-          />
+              <BreakdownTile
+                label="Biaya operasional"
+                value={`-${formatMoneyPositive(
+                  result.breakdown
+                    .costs.total,
+                )}`}
+                negative
+              />
+            </div>
+          </div>
 
-          <div className="my-2 border-t border-dashed border-[var(--gp-border)]" />
+          <div>
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--gp-text-muted)]">
+              Setelah biaya iklan
+            </p>
 
-          <FactRow
-            label="Total biaya iklan"
-            value={`-${formatMoneyPositive(
-              result.totalAdvertisingCost,
-            )}`}
-          />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <BreakdownTile
+                label="Contribution sebelum iklan"
+                value={formatMoney(
+                  result.breakdown
+                    .contributionBeforeAds,
+                )}
+                strong
+              />
 
-          <FactRow
-            label="Estimated Profit After Ads"
-            value={formatMoney(
-              result.estimatedProfitAfterAds,
-            )}
-            strong
-          />
+              <BreakdownTile
+                label="Total biaya iklan"
+                value={`-${formatMoneyPositive(
+                  result.totalAdvertisingCost,
+                )}`}
+                negative
+              />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[var(--gp-brand-primary)]/20 bg-[var(--gp-brand-soft)] p-4">
+            <p className="text-xs font-semibold text-[var(--gp-text-secondary)]">
+              Estimated Profit After Ads
+            </p>
+            <p
+              className={[
+                "mt-1 text-2xl font-bold tracking-[-0.04em]",
+                result.estimatedProfitAfterAds <
+                0
+                  ? "text-[var(--gp-danger)]"
+                  : "text-[var(--gp-text-primary)]",
+              ].join(" ")}
+            >
+              {formatMoney(
+                result.estimatedProfitAfterAds,
+              )}
+            </p>
+            <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+              Sisa setelah pendapatan dikurangi HPP, fee, biaya operasional, dan biaya iklan.
+            </p>
+          </div>
         </div>
 
         <p className="mt-5 text-[11px] leading-5 text-[var(--gp-text-muted)]">
@@ -382,6 +416,76 @@ function MetricCard({
   );
 }
 
+function MetricGlossary() {
+  const metrics = [
+    {
+      name: "Reported ACOS",
+      description:
+        "Persentase media ad spend dibanding GMV yang dilaporkan dari Ads. Ini angka yang biasanya terlihat di dashboard marketplace.",
+      formula: "Media ad spend ÷ GMV Ads",
+    },
+    {
+      name: "Economic ACOS",
+      description:
+        "Persentase seluruh biaya iklan dibanding GMV Ads. Angka ini memasukkan biaya iklan tambahan yang kamu input.",
+      formula: "Total biaya iklan ÷ GMV Ads",
+    },
+    {
+      name: "CPC",
+      description:
+        "Rata-rata biaya untuk satu klik. Jika klik kosong atau 0, CPC tidak bisa dihitung.",
+      formula: "Total biaya iklan ÷ klik",
+    },
+    {
+      name: "CPA",
+      description:
+        "Rata-rata biaya iklan untuk mendapatkan satu order. Jika order 0, CPA tidak tersedia.",
+      formula: "Total biaya iklan ÷ order",
+    },
+  ];
+
+  return (
+    <div className="mt-5 rounded-2xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--gp-brand-soft)] text-xs font-bold text-[var(--gp-brand-primary)]"
+        >
+          i
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[var(--gp-text-primary)]">
+            Cara membaca metrik
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
+            Tidak semua angka menjawab pertanyaan yang sama. Gunakan definisi
+            ini sebelum mengambil keputusan dari hasil campaign.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        {metrics.map((metric) => (
+          <div
+            key={metric.name}
+            className="rounded-xl border border-[var(--gp-border)] bg-white p-3"
+          >
+            <p className="text-xs font-bold text-[var(--gp-text-primary)]">
+              {metric.name}
+            </p>
+            <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+              {metric.description}
+            </p>
+            <p className="mt-2 text-[10px] font-semibold text-[var(--gp-brand-primary)]">
+              Rumus: {metric.formula}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SectionHeading({
   eyebrow,
   title,
@@ -402,7 +506,7 @@ function SectionHeading({
   );
 }
 
-function FactRow({
+function FactTile({
   label,
   value,
   strong = false,
@@ -412,21 +516,53 @@ function FactRow({
   strong?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-[var(--gp-border)] pb-3 last:border-0 last:pb-0">
-      <span className="text-xs leading-5 text-[var(--gp-text-secondary)]">
+    <div className="rounded-xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(32,33,36,0.06)]">
+      <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
         {label}
-      </span>
-
-      <span
+      </p>
+      <p
         className={[
-          "shrink-0 text-right text-sm",
+          "mt-2 text-lg tracking-[-0.03em]",
           strong
             ? "font-bold text-[var(--gp-text-primary)]"
             : "font-semibold text-[var(--gp-text-primary)]",
         ].join(" ")}
       >
         {value}
-      </span>
+      </p>
+    </div>
+  );
+}
+
+function BreakdownTile({
+  label,
+  value,
+  strong = false,
+  negative = false,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+  negative?: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(32,33,36,0.06)]">
+      <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
+        {label}
+      </p>
+
+      <p
+        className={[
+          "mt-2 text-lg tracking-[-0.03em]",
+          strong
+            ? "font-bold text-[var(--gp-text-primary)]"
+            : negative
+              ? "font-semibold text-[var(--gp-danger)]"
+              : "font-semibold text-[var(--gp-text-primary)]",
+        ].join(" ")}
+      >
+        {value}
+      </p>
     </div>
   );
 }
@@ -635,6 +771,13 @@ function getWarningContent(
 
         description:
           "Satu order dapat berisi lebih dari satu unit. GOProfit menghitung biaya PER_UNIT dan PER_ORDER sesuai scope masing-masing, sehingga hasilnya merupakan estimasi berdasarkan angka yang kamu masukkan.",
+      };
+
+    case "LIVE_ATTRIBUTION_ESTIMATE":
+      return {
+        title: "Atribusi Shopee Live belum dirinci",
+        description:
+          "Input orders dan units dari Shopee Live belum tersedia, sehingga GOProfit menganggap seluruh orders dan units sebagai penjualan Live. Isi atribusi Live agar biaya Live XTRA tidak terlalu besar.",
       };
   }
 }

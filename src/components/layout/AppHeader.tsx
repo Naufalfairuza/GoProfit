@@ -1,8 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  { href: "/plan", label: "Plan My Ads" },
+  { href: "/check", label: "Check My Ads" },
+  { href: "/saved", label: "Saved" },
+  { href: "/learn", label: "Learn" },
+] as const;
 
 export function AppHeader() {
+  const pathname = usePathname();
+
   return (
-    <header className="border-b border-[var(--gp-border)] bg-white">
+    <header className="sticky top-0 z-30 border-b border-[var(--gp-border)]/80 bg-white/95 shadow-[0_4px_20px_rgba(32,33,36,0.03)] backdrop-blur">
       <div className="mx-auto max-w-[1180px] px-4 md:px-6">
         <div className="flex h-16 items-center justify-between">
           <Link
@@ -14,36 +26,17 @@ export function AppHeader() {
           </Link>
 
           <nav
-            className="hidden items-center gap-7 text-sm font-medium text-[var(--gp-text-secondary)] md:flex"
+            className="hidden items-center gap-1 rounded-full bg-[var(--gp-surface-soft)] p-1 text-sm font-medium text-[var(--gp-text-secondary)] md:flex"
             aria-label="Navigasi utama"
           >
-            <Link
-              href="/plan"
-              className="transition hover:text-[var(--gp-text-primary)]"
-            >
-              Plan My Ads
-            </Link>
-
-            <Link
-              href="/check"
-              className="transition hover:text-[var(--gp-text-primary)]"
-            >
-              Check My Ads
-            </Link>
-
-            <Link
-              href="/saved"
-              className="transition hover:text-[var(--gp-text-primary)]"
-            >
-              Saved
-            </Link>
-
-            <Link
-              href="/learn"
-              className="transition hover:text-[var(--gp-text-primary)]"
-            >
-              Learn
-            </Link>
+            {navItems.map((item) => (
+              <HeaderNavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                active={isActivePath(pathname, item.href)}
+              />
+            ))}
           </nav>
 
           <span className="rounded-full bg-[var(--gp-brand-soft)] px-3 py-1 text-xs font-bold text-[var(--gp-brand-primary)]">
@@ -52,35 +45,52 @@ export function AppHeader() {
         </div>
 
         <nav
-          className="flex gap-5 overflow-x-auto pb-3 text-xs font-semibold text-[var(--gp-text-secondary)] md:hidden"
+          className="flex gap-1 overflow-x-auto pb-3 text-xs font-semibold text-[var(--gp-text-secondary)] md:hidden"
           aria-label="Navigasi mobile"
         >
-          <Link
-            href="/plan"
-            className="shrink-0 hover:text-[var(--gp-text-primary)]"
-          >
-            Plan My Ads
-          </Link>
-          <Link
-            href="/check"
-            className="shrink-0 hover:text-[var(--gp-text-primary)]"
-          >
-            Check My Ads
-          </Link>
-          <Link
-            href="/saved"
-            className="shrink-0 hover:text-[var(--gp-text-primary)]"
-          >
-            Saved
-          </Link>
-          <Link
-            href="/learn"
-            className="shrink-0 hover:text-[var(--gp-text-primary)]"
-          >
-            Learn
-          </Link>
+          {navItems.map((item) => (
+            <HeaderNavLink
+              key={item.href}
+              href={item.href}
+              label={item.label}
+              active={isActivePath(pathname, item.href)}
+              mobile
+            />
+          ))}
         </nav>
       </div>
     </header>
   );
+}
+
+function HeaderNavLink({
+  href,
+  label,
+  active,
+  mobile = false,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+  mobile?: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={[
+        "shrink-0 rounded-full transition",
+        mobile ? "px-3 py-2" : "px-3 py-2",
+        active
+          ? "bg-white font-bold text-[var(--gp-brand-primary)] shadow-[0_2px_8px_rgba(32,33,36,0.08)] ring-1 ring-[var(--gp-brand-soft)]"
+          : "hover:bg-white hover:text-[var(--gp-text-primary)]",
+      ].join(" ")}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function isActivePath(pathname: string | null, href: string): boolean {
+  return pathname === href || pathname?.startsWith(`${href}/`) === true;
 }

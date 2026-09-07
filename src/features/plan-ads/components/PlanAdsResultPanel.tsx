@@ -7,19 +7,21 @@ interface PlanAdsResultPanelProps {
 export function PlanAdsResultPanel({
   result,
 }: PlanAdsResultPanelProps) {
-  if (result.status === "NOT_ADS_FEASIBLE") {
-    return <NotAdsFeasibleResult result={result} />;
-  }
+  return (
+    <div className="space-y-5">
+      {result.status === "NOT_ADS_FEASIBLE" ? (
+        <NotAdsFeasibleResult result={result} />
+      ) : result.status === "TARGET_NOT_FEASIBLE" ? (
+        <TargetNotFeasibleResult result={result} />
+      ) : result.status === "BREAK_EVEN_ONLY" ? (
+        <BreakEvenResult result={result} />
+      ) : (
+        <TargetFeasibleResult result={result} />
+      )}
 
-  if (result.status === "TARGET_NOT_FEASIBLE") {
-    return <TargetNotFeasibleResult result={result} />;
-  }
-
-  if (result.status === "BREAK_EVEN_ONLY") {
-    return <BreakEvenResult result={result} />;
-  }
-
-  return <TargetFeasibleResult result={result} />;
+      <ShopeeAdsDirection result={result} />
+    </div>
+  );
 }
 
 function TargetFeasibleResult({
@@ -75,6 +77,35 @@ function TargetFeasibleResult({
             value={formatMoney(result.maxAdsCostForTarget)}
           />
         </div>
+
+        <PlanMetricGuide
+          items={[
+            {
+              name: "ROAS BEP",
+              description:
+                "Batas minimum agar biaya iklan impas. Jika ROAS aktual di bawah angka ini, contribution produk diperkirakan habis untuk iklan.",
+              formula: "Harga efektif ÷ contribution sebelum iklan",
+            },
+            {
+              name: "Minimum ROAS Aman",
+              description:
+                "ROAS minimum agar setelah membayar iklan, kamu masih menyisakan target profit yang dipilih.",
+              formula: "Harga efektif ÷ (contribution − target profit)",
+            },
+            {
+              name: "BEP ACOS",
+              description:
+                "Porsi maksimum dari GMV yang boleh dipakai untuk iklan sebelum produk mencapai titik impas.",
+              formula: "Contribution sebelum iklan ÷ harga efektif",
+            },
+            {
+              name: "Max Ads / Order",
+              description:
+                "Batas biaya iklan per order agar target profit masih bisa tercapai.",
+              formula: "Contribution sebelum iklan − target profit",
+            },
+          ]}
+        />
 
         <div className="mt-5 rounded-xl border border-[var(--gp-border)] p-4">
           <div className="flex justify-between text-[10px] font-bold">
@@ -172,6 +203,29 @@ function BreakEvenResult({
           />
         </div>
 
+        <PlanMetricGuide
+          items={[
+            {
+              name: "ROAS BEP",
+              description:
+                "Batas minimum agar biaya iklan impas. ROAS aktual di bawah angka ini berarti ruang profit produk belum cukup.",
+              formula: "Harga efektif ÷ contribution sebelum iklan",
+            },
+            {
+              name: "BEP ACOS",
+              description:
+                "Porsi maksimum dari GMV yang boleh dipakai untuk iklan sebelum hasilnya impas.",
+              formula: "Contribution sebelum iklan ÷ harga efektif",
+            },
+            {
+              name: "Ruang Ads hingga BEP",
+              description:
+                "Nominal biaya iklan maksimum per order sebelum profit produk menjadi nol.",
+              formula: "Contribution sebelum iklan",
+            },
+          ]}
+        />
+
         <div className="mt-4 rounded-xl bg-[var(--gp-info-soft)] p-4">
           <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
             Kamu belum menentukan target profit. Karena itu GOProfit
@@ -233,6 +287,29 @@ function TargetNotFeasibleResult({
             value={formatBps(result.breakEvenAcosBps)}
           />
         </div>
+
+        <PlanMetricGuide
+          items={[
+            {
+              name: "Profit sebelum iklan",
+              description:
+                "Sisa contribution produk sebelum biaya iklan dibayar. Target profit tidak boleh melebihi angka ini jika masih ingin punya ruang untuk ads.",
+              formula: "Harga efektif − HPP − fee − biaya operasional",
+            },
+            {
+              name: "ROAS BEP",
+              description:
+                "ROAS minimum untuk menutup biaya iklan tanpa menghasilkan profit maupun rugi.",
+              formula: "Harga efektif ÷ contribution sebelum iklan",
+            },
+            {
+              name: "BEP ACOS",
+              description:
+                "Batas persentase biaya iklan terhadap GMV sebelum produk mencapai titik impas.",
+              formula: "Contribution sebelum iklan ÷ harga efektif",
+            },
+          ]}
+        />
 
         <div className="mt-5 rounded-xl bg-[var(--gp-warning-soft)] p-4">
           <p className="text-sm font-semibold">
@@ -452,6 +529,180 @@ function MetricCard({
         {value}
       </p>
     </div>
+  );
+}
+
+function PlanMetricGuide({
+  items,
+}: {
+  items: Array<{
+    name: string;
+    description: string;
+    formula: string;
+  }>;
+}) {
+  return (
+    <section className="mt-5 rounded-2xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
+      <div className="flex items-start gap-3">
+        <span
+          aria-hidden="true"
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--gp-brand-soft)] text-xs font-bold text-[var(--gp-brand-primary)]"
+        >
+          i
+        </span>
+        <div>
+          <p className="text-sm font-bold text-[var(--gp-text-primary)]">
+            Cara membaca hasil ini
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
+            Angka-angka berikut adalah batas untuk keputusan iklan, bukan
+            sekadar skor performa marketplace.
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 space-y-3">
+        {items.map((item) => (
+          <article
+            key={item.name}
+            className="rounded-xl border border-[var(--gp-border)] bg-white p-3 transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(32,33,36,0.06)]"
+          >
+            <p className="text-xs font-bold text-[var(--gp-text-primary)]">
+              {item.name}
+            </p>
+            <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+              {item.description}
+            </p>
+            <p className="mt-2 text-[10px] font-semibold text-[var(--gp-brand-primary)]">
+              Rumus: {item.formula}
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ShopeeAdsDirection({
+  result,
+}: {
+  result: PlanAdsResult;
+}) {
+  const hasBreakEven = "breakEvenRoas" in result;
+  const hasTarget = "minimumTargetRoas" in result;
+  const referenceLabel = hasTarget
+    ? "Minimum ROAS Aman"
+    : "ROAS BEP";
+  const referenceValue = hasTarget
+    ? formatRoas(result.minimumTargetRoas)
+    : hasBreakEven
+      ? formatRoas(result.breakEvenRoas)
+      : "Belum tersedia";
+  const canAdvertise = result.status !== "NOT_ADS_FEASIBLE";
+
+  return (
+    <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
+      <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
+        Arah penggunaan
+      </p>
+
+      <h3 className="mt-1 text-lg font-bold tracking-[-0.03em]">
+        Angka ini dipakai ke mana di Shopee?
+      </h3>
+
+      <p className="mt-2 text-sm leading-6 text-[var(--gp-text-secondary)]">
+        GOProfit menghitung batas ekonomi produkmu. Angka ini bukan target
+        otomatis dari Shopee. Jika target profit ingin dipertahankan, angka ini
+        harus dibaca sebagai batas bawah, bukan angka yang boleh diturunkan.
+      </p>
+
+      <div className="mt-5 rounded-2xl bg-[var(--gp-brand-soft)] p-4">
+        <p className="text-xs font-semibold text-[var(--gp-text-secondary)]">
+          Patokan ekonomi dari GOProfit
+        </p>
+        <p className="mt-1 text-2xl font-bold tracking-[-0.04em]">
+          {referenceValue}
+        </p>
+        <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+          {canAdvertise
+            ? `${referenceLabel} adalah batas bawah untuk target profit yang kamu pilih.`
+            : "Perbaiki ekonomi produk terlebih dahulu karena belum ada ruang aman untuk biaya iklan."}
+        </p>
+      </div>
+
+      {hasTarget && (
+        <div className="mt-3 rounded-xl border border-[var(--gp-warning)]/30 bg-[var(--gp-warning-soft)] p-4">
+          <p className="text-xs font-bold text-[var(--gp-text-primary)]">
+            Cara membaca angka {referenceValue}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
+            Target {referenceValue} atau lebih berarti target profit masih
+            didukung oleh perhitungan ini. Target di bawah {referenceValue},
+            misalnya {formatRoas(Math.max(result.minimumTargetRoas - 0.1, 0))},
+            mungkin tetap bisa menghasilkan profit, tetapi profitnya berpotensi
+            berada di bawah target yang kamu pilih. Jika hasil aktual juga
+            turun di bawah ROAS BEP, campaign berpotensi rugi.
+          </p>
+        </div>
+      )}
+
+      <div className="mt-4 grid gap-3 md:grid-cols-2">
+        <ShopeeAdsModeCard
+          title="GMV Max ROAS"
+          label="Jika ingin mengatur target"
+          description={
+            canAdvertise
+              ? `Jika target profit harus dijaga, jangan memasukkan target di bawah ${referenceValue}. Setelah itu bandingkan dengan rekomendasi Shopee dan ROAS historis karena target yang terlalu tinggi dapat mengurangi jangkauan.`
+              : "Jangan menaikkan target atau scale iklan sebelum produk memiliki ruang profit yang cukup."
+          }
+        />
+
+        <ShopeeAdsModeCard
+          title="GMV Max Auto"
+          label="Jika ingin optimasi otomatis"
+          description="Shopee mengoptimalkan strategi dan memberi estimasi ROAS. GOProfit tidak menentukan target untuk mode ini; gunakan Check My Ads setelah data campaign terkumpul untuk mengecek profit aktualnya."
+        />
+      </div>
+
+      <p className="mt-4 text-[11px] leading-5 text-[var(--gp-text-muted)]">
+        Shopee menjelaskan bahwa target ROAS yang terlalu tinggi dapat membuat
+        penayangan dan pengeluaran lebih selektif. Baca aturan dan rekomendasi
+        terbaru di{" "}
+        <a
+          href="https://iklan.shopee.co.id/learn/faq/555/2031"
+          target="_blank"
+          rel="noreferrer"
+          className="font-semibold text-[var(--gp-brand-primary)] underline underline-offset-2"
+        >
+          pusat edukasi Shopee Ads
+        </a>
+        .
+      </p>
+    </section>
+  );
+}
+
+function ShopeeAdsModeCard({
+  title,
+  label,
+  description,
+}: {
+  title: string;
+  label: string;
+  description: string;
+}) {
+  return (
+    <article className="rounded-xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h4 className="text-sm font-bold">{title}</h4>
+        <span className="rounded-full bg-white px-2 py-1 text-[10px] font-semibold text-[var(--gp-text-secondary)]">
+          {label}
+        </span>
+      </div>
+      <p className="mt-3 text-xs leading-5 text-[var(--gp-text-secondary)]">
+        {description}
+      </p>
+    </article>
   );
 }
 

@@ -51,6 +51,14 @@ export function validatePlanInput(input: PlanAdsInput): ValidationResult {
         issues.push({ field: `fees.${fee.id}`, code: "FEE_TYPE_CONFLICT" });
       }
     }
+
+    if (
+      fee.capAmountPerUnit !== undefined &&
+      (!Number.isSafeInteger(fee.capAmountPerUnit) ||
+        fee.capAmountPerUnit < 0)
+    ) {
+      issues.push({ field: `fees.${fee.id}`, code: "FEE_CAP_INVALID" });
+    }
   }
 
   for (const cost of input.costs) {
@@ -125,6 +133,26 @@ export function validateCheckInput(input: CheckAdsInput): ValidationResult {
   }
   if (c.clicks !== undefined && (!Number.isSafeInteger(c.clicks) || c.clicks < 0)) {
     issues.push({ field: "campaign.clicks", code: "CLICKS_INVALID" });
+  }
+
+  if (
+    c.liveOrders !== undefined &&
+    (!Number.isSafeInteger(c.liveOrders) ||
+      c.liveOrders < 0 ||
+      c.liveOrders > c.orders)
+  ) {
+    issues.push({ field: "campaign.liveOrders", code: "LIVE_ORDERS_INVALID" });
+  }
+  if (
+    c.liveUnitsSold !== undefined &&
+    (!Number.isSafeInteger(c.liveUnitsSold) ||
+      c.liveUnitsSold < 0 ||
+      c.liveUnitsSold > c.unitsSold)
+  ) {
+    issues.push({
+      field: "campaign.liveUnitsSold",
+      code: "LIVE_UNITS_INVALID",
+    });
   }
 
   return result(issues);

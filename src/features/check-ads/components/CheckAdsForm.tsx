@@ -7,6 +7,7 @@ import type {
 } from "react";
 
 import {
+    useEffect,
     useRef,
     useState,
 } from "react";
@@ -14,6 +15,8 @@ import {
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { NumberInput } from "@/components/ui/NumberInput";
 import { SaveCalculationButton } from "@/components/calculations/SaveCalculationButton";
+import { ExportShareActions } from "@/components/calculations/ExportShareActions";
+import { AnimatedResult } from "@/components/ui/MotionPrimitives";
 
 import { checkAds } from "@/core/calculation/check-ads";
 import { CALCULATION_RULE_VERSION } from "@/core/calculation/constants";
@@ -27,6 +30,19 @@ import type {
     TargetProfit,
 } from "@/domain/types";
 
+import {
+    areShopeeProgramDraftsReady,
+    buildShopeeProgramFees,
+    createShopeeProgramDrafts,
+    restoreShopeeProgramDrafts,
+    updateShopeeProgramDrafts,
+} from "@/config/marketplaces/shopee-programs";
+import type {
+    ShopeeProgramDraft,
+    ShopeeProgramId,
+} from "@/config/marketplaces/shopee-programs";
+import { BrowserScenarioRepository } from "@/services/persistence/browser-scenario.repository";
+
 import { CheckAdsResultPanel } from "./CheckAdsResultPanel";
 
 import { FeeAndCostSection } from "@/features/plan-ads/components/FeeAndCostSection";
@@ -37,6 +53,13 @@ type TargetProfitMode =
   | "AMOUNT_PER_ORDER"
   | "NET_MARGIN_PERCENT"
   | "HPP_MARKUP_PERCENT";
+
+const CHECK_SESSION_KEY = "goprofit.check-session.v1";
+
+interface CheckSessionSnapshot {
+  input: CheckAdsInput;
+  result: CheckAdsResult;
+}
 
 export function CheckAdsForm() {
   const [
@@ -107,6 +130,10 @@ export function CheckAdsForm() {
       null,
     );
 
+  const [programs, setPrograms] = useState<ShopeeProgramDraft[]>(
+    createShopeeProgramDrafts,
+  );
+
   const [
     targetMode,
     setTargetMode,
@@ -172,6 +199,16 @@ export function CheckAdsForm() {
     );
 
   const [
+    liveOrders,
+    setLiveOrders,
+  ] = useState<number | null>(null);
+
+  const [
+    liveUnitsSold,
+    setLiveUnitsSold,
+  ] = useState<number | null>(null);
+
+  const [
     clicks,
     setClicks,
   ] =
@@ -200,6 +237,8 @@ export function CheckAdsForm() {
       null,
     );
 
+  const [restoredFromSession, setRestoredFromSession] = useState(false);
+
   const resultRef =
     useRef<HTMLDivElement>(
       null,
@@ -216,6 +255,13 @@ export function CheckAdsForm() {
         "HPP_MARKUP_PERCENT") &&
       targetRateBps !== null);
 
+  const liveProgramEnabled = programs.some(
+    (program) => program.id === "shopee-live-xtra" && program.enabled,
+  );
+  const liveAttributionReady =
+    !liveProgramEnabled ||
+    (liveOrders !== null && liveUnitsSold !== null);
+
   const canCalculate =
     hpp !== null &&
     listPrice !== null &&
@@ -223,12 +269,199 @@ export function CheckAdsForm() {
     attributedGmv !== null &&
     orders !== null &&
     unitsSold !== null &&
-    targetReady;
+    targetReady &&
+    liveAttributionReady &&
+    areShopeeProgramDraftsReady(programs);
+
+  const hasAnyInput =
+    hpp !== null ||
+    listPrice !== null ||
+    discount !== null ||
+    voucher !== null ||
+    adminFeeBps !== null ||
+    processFee !== null ||
+    packingCost !== null ||
+    programs.some((program) => program.enabled) ||
+    targetMode !== "NONE" ||
+    mediaAdSpend !== null ||
+    additionalAdCost !== null ||
+    attributedGmv !== null ||
+    orders !== null ||
+    unitsSold !== null ||
+    liveOrders !== null ||
+    liveUnitsSold !== null ||
+    clicks !== null ||
+    result !== null;
+
+  function applyCheckSnapshot(
+    input: CheckAdsInput,
+    savedResult?: CheckAdsResult,
+  ) {
+      const economics = input.economics;
+      const productDiscount = economics.adjustments.find(
+        (adjustment) => adjustment.type === "PRODUCT_DISCOUNT",
+      );
+      const sellerVoucher = economics.adjustments.find(
+        (adjustment) => adjustment.type === "SELLER_VOUCHER",
+      );
+      const adminFee = economics.fees.find(
+        (fee) => fee.id === "marketplace-admin-fee",
+      );
+      const processFee = economics.fees.find(
+        (fee) => fee.id === "marketplace-process-fee",
+      );
+      const packing = economics.costs.find(
+        (cost) => cost.id === "packing-cost",
+      );
+
+      setHpp(economics.hppPerUnit);
+      setListPrice(economics.listPrice);
+      setShowDiscount(Boolean(productDiscount));
+      setDiscount(productDiscount?.amount ?? null);
+      setShowVoucher(Boolean(sellerVoucher));
+      setVoucher(sellerVoucher?.amount ?? null);
+      setAdminFeeBps(adminFee?.rateBps ?? null);
+      setProcessFee(processFee?.fixedAmount ?? null);
+      setPackingCost(packing?.amount ?? null);
+      setPrograms(restoreShopeeProgramDrafts(economics.fees));
+
+      switch (economics.targetProfit.mode) {
+        case "NONE":
+          setTargetMode("NONE");
+          setTargetAmount(null);
+          setTargetRateBps(null);
+          break;
+        case "AMOUNT_PER_ORDER":
+          setTargetMode("AMOUNT_PER_ORDER");
+          setTargetAmount(economics.targetProfit.amount);
+          setTargetRateBps(null);
+          break;
+        case "NET_MARGIN_PERCENT":
+          setTargetMode("NET_MARGIN_PERCENT");
+          setTargetAmount(null);
+          setTargetRateBps(economics.targetProfit.rateBps);
+          break;
+        case "HPP_MARKUP_PERCENT":
+          setTargetMode("HPP_MARKUP_PERCENT");
+          setTargetAmount(null);
+          setTargetRateBps(economics.targetProfit.rateBps);
+          break;
+      }
+
+      setMediaAdSpend(input.campaign.mediaAdSpend);
+      setAdditionalAdCost(input.campaign.additionalAdCost);
+      setAttributedGmv(input.campaign.attributedGmv);
+      setOrders(input.campaign.orders);
+      setUnitsSold(input.campaign.unitsSold);
+      setLiveOrders(
+        input.campaign.liveOrders ??
+          (economics.fees.some(
+            (fee) => fee.id === "shopee-program-shopee-live-xtra",
+          )
+            ? input.campaign.orders
+            : null),
+      );
+      setLiveUnitsSold(
+        input.campaign.liveUnitsSold ??
+          (economics.fees.some(
+            (fee) => fee.id === "shopee-program-shopee-live-xtra",
+          )
+            ? input.campaign.unitsSold
+            : null),
+      );
+      setClicks(input.campaign.clicks ?? null);
+      setCalculatedInput(input);
+      setResult(savedResult ?? checkAds(input));
+      setFormError(null);
+  }
+
+  useEffect(() => {
+    const restoreId = new URLSearchParams(window.location.search).get("restore");
+    let cancelled = false;
+
+    if (!restoreId) {
+      const rawSnapshot = window.sessionStorage.getItem(CHECK_SESSION_KEY);
+
+      if (rawSnapshot) {
+        try {
+          const snapshot = JSON.parse(rawSnapshot) as CheckSessionSnapshot;
+          window.queueMicrotask(() => {
+            if (cancelled) return;
+            applyCheckSnapshot(snapshot.input, snapshot.result);
+            setRestoredFromSession(true);
+          });
+        } catch {
+          window.sessionStorage.removeItem(CHECK_SESSION_KEY);
+        }
+      }
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const repository = new BrowserScenarioRepository();
+
+    void repository.get(restoreId).then((saved) => {
+      if (cancelled || !saved || saved.kind !== "CHECK") return;
+
+      if (!saved.checkInput) {
+        setFormError(
+          "Snapshot lama belum menyimpan data campaign. Buat perhitungan baru.",
+        );
+        return;
+      }
+
+      const snapshot: CheckSessionSnapshot = {
+        input: saved.checkInput,
+        result: saved.checkResult ?? checkAds(saved.checkInput),
+      };
+
+      applyCheckSnapshot(snapshot.input, snapshot.result);
+      setRestoredFromSession(false);
+      window.sessionStorage.setItem(CHECK_SESSION_KEY, JSON.stringify(snapshot));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function invalidateResult() {
     setResult(null);
     setCalculatedInput(null);
     setFormError(null);
+    setRestoredFromSession(false);
+    window.sessionStorage.removeItem(CHECK_SESSION_KEY);
+  }
+
+  function resetForm() {
+    setHpp(null);
+    setListPrice(null);
+    setShowDiscount(false);
+    setDiscount(null);
+    setShowVoucher(false);
+    setVoucher(null);
+    setAdminFeeBps(null);
+    setProcessFee(null);
+    setPackingCost(null);
+    setPrograms(createShopeeProgramDrafts());
+    setTargetMode("NONE");
+    setTargetAmount(null);
+    setTargetRateBps(null);
+    setMediaAdSpend(null);
+    setAdditionalAdCost(null);
+    setAttributedGmv(null);
+    setOrders(null);
+    setUnitsSold(null);
+    setLiveOrders(null);
+    setLiveUnitsSold(null);
+    setClicks(null);
+    setResult(null);
+    setCalculatedInput(null);
+    setFormError(null);
+    setRestoredFromSession(false);
+    window.sessionStorage.removeItem(CHECK_SESSION_KEY);
   }
 
   function updateField<T>(
@@ -238,6 +471,14 @@ export function CheckAdsForm() {
     value: T,
   ) {
     setter(value);
+    invalidateResult();
+  }
+
+  function updateProgram(
+    id: ShopeeProgramId,
+    patch: Partial<ShopeeProgramDraft>,
+  ) {
+    setPrograms((current) => updateShopeeProgramDrafts(current, id, patch));
     invalidateResult();
   }
 
@@ -364,7 +605,7 @@ export function CheckAdsForm() {
       });
     }
 
-    return fees;
+    return [...fees, ...buildShopeeProgramFees(programs)];
   }
 
   function buildCosts():
@@ -456,6 +697,10 @@ export function CheckAdsForm() {
 
   function validateForm():
     string | null {
+    if (!areShopeeProgramDraftsReady(programs)) {
+      return "Lengkapi persentase program Shopee yang diaktifkan.";
+    }
+
     if (
       listPrice === null ||
       listPrice <= 0
@@ -498,6 +743,20 @@ export function CheckAdsForm() {
       return "Jumlah unit terjual tidak valid.";
     }
 
+    if (liveProgramEnabled) {
+      if (liveOrders === null || liveOrders < 0 || liveOrders > orders) {
+        return "Orders dari Shopee Live harus diisi dan tidak boleh melebihi total Orders.";
+      }
+
+      if (
+        liveUnitsSold === null ||
+        liveUnitsSold < 0 ||
+        liveUnitsSold > unitsSold
+      ) {
+        return "Units dari Shopee Live harus diisi dan tidak boleh melebihi total Units Sold.";
+      }
+    }
+
     if (
       additionalAdCost !==
         null &&
@@ -511,6 +770,24 @@ export function CheckAdsForm() {
       clicks < 0
     ) {
       return "Jumlah klik tidak boleh negatif.";
+    }
+
+    if (
+      liveOrders !== null &&
+      (liveOrders < 0 ||
+        orders !== null &&
+          liveOrders > orders)
+    ) {
+      return "Orders dari Shopee Live tidak valid.";
+    }
+
+    if (
+      liveUnitsSold !== null &&
+      (liveUnitsSold < 0 ||
+        unitsSold !== null &&
+          liveUnitsSold > unitsSold)
+    ) {
+      return "Units dari Shopee Live tidak valid.";
     }
 
     if (
@@ -615,6 +892,15 @@ export function CheckAdsForm() {
 
         unitsSold,
 
+        ...(liveProgramEnabled &&
+        liveOrders !== null &&
+        liveUnitsSold !== null
+          ? {
+              liveOrders,
+              liveUnitsSold,
+            }
+          : {}),
+
         ...(clicks !== null
           ? {
               clicks,
@@ -634,6 +920,14 @@ export function CheckAdsForm() {
         calculation,
       );
       setCalculatedInput(input);
+      setRestoredFromSession(false);
+      window.sessionStorage.setItem(
+        CHECK_SESSION_KEY,
+        JSON.stringify({
+          input,
+          result: calculation,
+        } satisfies CheckSessionSnapshot),
+      );
 
       window.requestAnimationFrame(
         () => {
@@ -867,6 +1161,9 @@ export function CheckAdsForm() {
               value,
             )
           }
+          programs={programs}
+          onProgramChange={updateProgram}
+          idPrefix="check-program"
         />
 
         <TargetProfitSection
@@ -1002,6 +1299,34 @@ export function CheckAdsForm() {
               required
             />
 
+            {liveProgramEnabled && (
+              <>
+                <NumberInput
+                  id="check-live-orders"
+                  label="Orders dari Shopee Live"
+                  value={liveOrders}
+                  onValueChange={(value) =>
+                    updateField(setLiveOrders, value)
+                  }
+                  placeholder="3"
+                  helperText="Pesanan yang teratribusi dari Shopee Live, termasuk Live Affiliate."
+                  required
+                />
+
+                <NumberInput
+                  id="check-live-units-sold"
+                  label="Units dari Shopee Live"
+                  value={liveUnitsSold}
+                  onValueChange={(value) =>
+                    updateField(setLiveUnitsSold, value)
+                  }
+                  placeholder="3"
+                  helperText="Unit dari Live yang termasuk kategori eligible."
+                  required
+                />
+              </>
+            )}
+
             <NumberInput
               id="check-clicks"
               label="Clicks (Opsional)"
@@ -1068,21 +1393,42 @@ export function CheckAdsForm() {
         )}
 
         <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5 md:p-6">
-          <button
-            type="submit"
-            disabled={
-              !canCalculate
-            }
-            className={[
-              "flex min-h-12 w-full items-center justify-center rounded-[var(--gp-radius-button)] px-6",
-              "text-sm font-bold transition",
-              canCalculate
-                ? "bg-[var(--gp-brand-primary)] text-white hover:bg-[var(--gp-brand-hover)]"
-                : "cursor-not-allowed bg-[var(--gp-border)] text-[var(--gp-text-muted)]",
-            ].join(" ")}
-          >
-            Analisis Iklan Saya
-          </button>
+          {restoredFromSession && (
+            <div className="mb-4 rounded-xl border border-[var(--gp-info)] bg-[var(--gp-info-soft)] p-3">
+              <p className="text-xs font-bold text-[var(--gp-info)]">
+                Analisis terakhir dipulihkan
+              </p>
+              <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+                Hasil tetap disimpan selama tab browser ini masih aktif. Klik
+                &quot;Mulai ulang&quot; jika ingin menganalisis campaign lain.
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+            <button
+              type="submit"
+              disabled={!canCalculate}
+              className={[
+                "flex min-h-12 w-full items-center justify-center rounded-[var(--gp-radius-button)] px-6",
+                "text-sm font-bold transition",
+                canCalculate
+                  ? "bg-[var(--gp-brand-primary)] text-white hover:-translate-y-0.5 hover:bg-[var(--gp-brand-hover)] hover:shadow-[0_8px_20px_rgba(244,90,53,0.22)]"
+                  : "cursor-not-allowed bg-[var(--gp-border)] text-[var(--gp-text-muted)]",
+              ].join(" ")}
+            >
+              Analisis Iklan Saya
+            </button>
+
+            <button
+              type="button"
+              onClick={resetForm}
+              disabled={!hasAnyInput}
+              className="min-h-12 rounded-[var(--gp-radius-button)] border border-[var(--gp-border)] px-5 text-sm font-bold text-[var(--gp-text-secondary)] transition hover:border-[var(--gp-brand-primary)] hover:text-[var(--gp-brand-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Mulai ulang
+            </button>
+          </div>
 
           <p className="mt-3 text-center text-[11px] leading-5 text-[var(--gp-text-muted)]">
             Hasil merupakan
@@ -1114,18 +1460,26 @@ export function CheckAdsForm() {
       </form>
 
     {result && calculatedInput && (
-      <section className="mx-auto mt-8 max-w-[1180px]">
-        <CheckAdsResultPanel result={result} input={calculatedInput} />
-        <div className="mt-4 max-w-[360px]">
-          <SaveCalculationButton
-            kind="CHECK"
-            planInput={calculatedInput.economics}
-            checkInput={calculatedInput}
-            checkResult={result}
-          />
-        </div>
-      </section>
-      )}
+      <AnimatedResult>
+        <section className="mx-auto mt-8 max-w-[1180px]">
+          <CheckAdsResultPanel result={result} input={calculatedInput} />
+          <div className="mt-4 max-w-[360px]">
+            <SaveCalculationButton
+              kind="CHECK"
+              planInput={calculatedInput.economics}
+              checkInput={calculatedInput}
+              checkResult={result}
+            />
+          </div>
+          <div className="mt-4 max-w-[520px]">
+            <ExportShareActions
+              kind="CHECK"
+              checkResult={result}
+            />
+          </div>
+        </section>
+      </AnimatedResult>
+    )}
     </>
   );
 }

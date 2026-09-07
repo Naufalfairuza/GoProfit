@@ -68,6 +68,30 @@ test.describe("GOProfit - Plan My Ads", () => {
     await expect(priceInput).toHaveValue(
       "Rp150.000",
     );
+
+    const adminFeeInput = page.getByLabel("Biaya Admin Marketplace");
+    await adminFeeInput.fill("8,5");
+    await expect(adminFeeInput).toHaveValue("8,5");
+  });
+
+  test("includes optional Shopee program fees", async ({
+    page,
+  }) => {
+    await fillBaseEconomics(page, "8");
+
+    await page
+      .getByRole("checkbox", { name: "Promo XTRA+" })
+      .check();
+
+    await page
+      .getByRole("button", { name: "Hitung ROAS Saya" })
+      .click();
+
+    const promoCard = page
+      .getByRole("checkbox", { name: "Promo XTRA+" })
+      .locator("xpath=../..");
+    await expect(promoCard.getByText("Promo XTRA+", { exact: true })).toBeVisible();
+    await expect(promoCard.getByText("Biaya program", { exact: true })).toBeVisible();
   });
 
   test("calculates target ROAS baseline correctly", async ({
@@ -134,6 +158,31 @@ test.describe("GOProfit - Plan My Ads", () => {
         },
       ),
     ).toBeVisible();
+  });
+
+  test("keeps the calculated result after visiting Learn", async ({ page }) => {
+    await fillBaseEconomics(page, "8,5");
+    await selectTargetAmount(page, "25000");
+    await page.getByRole("button", { name: "Hitung ROAS Saya" }).click();
+    await expect(page.getByText("Batas ekonomi iklanmu")).toBeVisible();
+
+    await page.locator('a[href="/learn"]:visible').click();
+    await expect(
+      page.getByRole("heading", { name: "Baca angka iklan dengan konteks profit" }),
+    ).toBeVisible();
+
+    await page
+      .locator(
+        'nav[aria-label="Navigasi utama"] a[href="/plan"]:visible, nav[aria-label="Navigasi mobile"] a[href="/plan"]:visible',
+      )
+      .click();
+    await expect(page.getByText("Batas ekonomi iklanmu")).toBeVisible();
+    await expect(page.getByText("Perhitungan terakhir dipulihkan")).toBeVisible();
+    await expect(
+      page.locator(
+        'nav[aria-label="Navigasi utama"] a[href="/plan"]:visible, nav[aria-label="Navigasi mobile"] a[href="/plan"]:visible',
+      ),
+    ).toHaveAttribute("aria-current", "page");
   });
 
   test("shows break-even only when target profit is not selected", async ({

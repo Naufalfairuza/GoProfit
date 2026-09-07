@@ -5,8 +5,11 @@ fokus pada Shopee Indonesia dan menyediakan Plan My Ads untuk menghitung ROAS
 aman serta Check My Ads untuk mengecek profit campaign setelah HPP, fee, dan
 biaya iklan.
 
-Fee marketplace tidak di-hardcode karena dapat berbeda menurut kategori,
-program, dan kondisi seller. Isi berdasarkan rincian tokomu sendiri.
+Fee marketplace dan program Shopee dapat berbeda menurut kategori, program,
+dan kondisi seller. GOProfit menyediakan referensi awal untuk Promo XTRA dan
+Promo XTRA+, serta referensi 3%/2% dan cap untuk Shopee Live XTRA. Gratis
+Ongkir XTRA tetap meminta tarif kategori secara manual. Selalu cocokkan angka
+dengan rincian biaya dan atribusi penjualan di Seller Centre.
 
 Dokumentasi produk ada di [`docs/PRD.md`](docs/PRD.md) dan model data di
 [`docs/ERD.md`](docs/ERD.md).
@@ -36,6 +39,8 @@ npm run e2e
 ```
 
 The main application routes are `/plan`, `/check`, `/saved`, and `/learn`.
+Saved calculations can be opened with **Buka & restore** to return their input
+to the relevant calculator.
 
 ## Learn More
 

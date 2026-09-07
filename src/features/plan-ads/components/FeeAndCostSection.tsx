@@ -2,6 +2,12 @@
 
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { PercentageInput } from "@/components/ui/PercentageInput";
+import type {
+  ShopeeProgramDraft,
+  ShopeeProgramId,
+} from "@/config/marketplaces/shopee-programs";
+
+import { ShopeeProgramFeeSection } from "./ShopeeProgramFeeSection";
 
 interface FeeAndCostSectionProps {
   adminFeeBps: number | null;
@@ -12,6 +18,13 @@ interface FeeAndCostSectionProps {
 
   packingCost: number | null;
   onPackingCostChange: (value: number | null) => void;
+
+  programs: ShopeeProgramDraft[];
+  onProgramChange: (
+    id: ShopeeProgramId,
+    patch: Partial<ShopeeProgramDraft>,
+  ) => void;
+  idPrefix: string;
 }
 
 export function FeeAndCostSection({
@@ -21,6 +34,9 @@ export function FeeAndCostSection({
   onProcessFeeChange,
   packingCost,
   onPackingCostChange,
+  programs,
+  onProgramChange,
+  idPrefix,
 }: FeeAndCostSectionProps) {
   return (
     <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5 md:p-6">
@@ -74,13 +90,11 @@ export function FeeAndCostSection({
         />
       </div>
 
-      <div className="mt-6 rounded-xl bg-[var(--gp-warning-soft)] p-4">
-        <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
-          Preset fee Shopee resmi belum diaktifkan pada versi development ini.
-          Untuk sementara, masukkan persentase berdasarkan rincian biaya
-          tokomu sendiri.
-        </p>
-      </div>
+      <ShopeeProgramFeeSection
+        programs={programs}
+        onProgramChange={onProgramChange}
+        idPrefix={idPrefix}
+      />
     </section>
   );
 }

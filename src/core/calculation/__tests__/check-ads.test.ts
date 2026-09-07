@@ -156,4 +156,41 @@ describe("checkAds", () => {
 
     expect(result.warnings.some((w) => w.code === "GMV_UNIT_ECONOMICS_MISMATCH")).toBe(true);
   });
+
+  it("charges Live XTRA only on Live-attributed units", () => {
+    const economics = basePlanInput();
+    economics.fees.push({
+      id: "shopee-program-shopee-live-xtra",
+      name: "Shopee Live XTRA",
+      feeType: "PERCENTAGE",
+      rateBps: 300,
+      capAmountPerUnit: 20_000,
+      calculationBase: "EFFECTIVE_SELLING_PRICE",
+      scope: "PER_ORDER",
+      attribution: "SHOPEE_LIVE",
+      source: "CUSTOM",
+      active: true,
+    });
+
+    const result = checkAds({
+      economics,
+      campaign: {
+        mediaAdSpend: 100_000,
+        additionalAdCost: 0,
+        attributedGmv: 750_000,
+        orders: 5,
+        unitsSold: 5,
+        liveOrders: 2,
+        liveUnitsSold: 2,
+      },
+      calculationRuleVersion: CALCULATION_RULE_VERSION,
+    });
+
+    expect(
+      result.breakdown.fees.items.find(
+        (item) => item.feeId === "shopee-program-shopee-live-xtra",
+      )?.amount,
+    ).toBe(9_000);
+    expect(result.breakdown.contributionBeforeAds).toBe(264_750);
+  });
 });

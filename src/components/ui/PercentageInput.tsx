@@ -1,6 +1,6 @@
 "use client";
 
-import type { ChangeEvent } from "react";
+import { useState } from "react";
 
 import {
     formatPercentageFromBps,
@@ -26,8 +26,22 @@ export function PercentageInput({
   helperText,
   error,
 }: PercentageInputProps) {
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    onValueChange(parsePercentageToBps(event.target.value));
+  const [draft, setDraft] = useState(() =>
+    valueBps === null ? "" : formatPercentageFromBps(valueBps),
+  );
+  const [isEditing, setIsEditing] = useState(false);
+
+  const displayedValue = isEditing
+    ? draft
+    : valueBps === null
+      ? ""
+      : formatPercentageFromBps(valueBps);
+
+  function handleChange(rawValue: string) {
+    // Keep the user's raw text while typing so values such as "8," are not
+    // immediately reformatted to "8" before the decimal is completed.
+    setDraft(rawValue);
+    onValueChange(parsePercentageToBps(rawValue));
   }
 
   return (
@@ -41,17 +55,21 @@ export function PercentageInput({
 
       <div className="relative">
         <input
-          id={id}
-          type="text"
-          inputMode="decimal"
-          autoComplete="off"
-          value={
-            valueBps === null
-              ? ""
-              : formatPercentageFromBps(valueBps)
-          }
-          onChange={handleChange}
-          placeholder={placeholder}
+        id={id}
+        type="text"
+        inputMode="decimal"
+        autoComplete="off"
+        value={displayedValue}
+        onFocus={() => {
+          setDraft(valueBps === null ? "" : formatPercentageFromBps(valueBps));
+          setIsEditing(true);
+        }}
+        onChange={(event) => handleChange(event.target.value)}
+        onBlur={() => {
+          setIsEditing(false);
+          setDraft(valueBps === null ? "" : formatPercentageFromBps(valueBps));
+        }}
+        placeholder={placeholder}
           aria-invalid={Boolean(error)}
           className={[
             "h-12 w-full rounded-[var(--gp-radius-input)] border bg-white px-4 pr-12",

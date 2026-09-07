@@ -33,6 +33,7 @@ erDiagram
         string calculation_base
         int rate_bps
         bigint fixed_amount
+        bigint cap_amount_per_unit
         date effective_from
         date effective_to
         string eligibility
@@ -72,6 +73,9 @@ erDiagram
         string calculation_base
         int rate_bps
         bigint fixed_amount
+        bigint cap_amount_per_unit
+        string program_code
+        string attribution
         boolean active
     }
 
@@ -100,6 +104,8 @@ erDiagram
         int orders
         int units_sold
         int clicks
+        int live_orders
+        int live_units_sold
     }
 ```
 
@@ -113,6 +119,12 @@ erDiagram
 - `TargetProfit` → union `TargetProfit`.
 - `CampaignResult` → `CampaignInput` di dalam `CheckAdsInput`.
 - `Calculation` snapshot → `SavedCalculation` di repository browser.
+
+`SavedCalculation.checkInput` menyimpan input campaign lengkap untuk snapshot
+jenis Check agar restore dapat mengembalikan field ekonomi dan performa iklan.
+`capAmountPerUnit` dipakai untuk program yang memiliki batas biaya per unit;
+`program_code` pada model konseptual dapat diisi dari id seperti
+`shopee-program-promo-xtra-plus`.
 
 `PlanAdsResult` dan `CheckAdsResult` tidak perlu menjadi tabel sumber pada
 MVP. Keduanya adalah hasil deterministik yang bisa dihitung ulang dari input

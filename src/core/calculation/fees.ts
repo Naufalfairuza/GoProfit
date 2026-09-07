@@ -25,10 +25,21 @@ export function calculateFees(
   pricing: PricingBreakdown,
   fees: ScenarioFee[],
   quantities: QuantityContext,
+  livePricing?: PricingBreakdown,
 ): FeeCalculationResult {
   const items = fees
     .filter((fee) => fee.active)
     .map((fee) => {
+      const isLiveFee = fee.attribution === "SHOPEE_LIVE";
+      const feePricing =
+        isLiveFee && livePricing !== undefined ? livePricing : pricing;
+      const feeQuantities =
+        isLiveFee && quantities.liveUnits !== undefined
+          ? {
+              units: quantities.liveUnits,
+              orders: quantities.liveOrders ?? quantities.liveUnits,
+            }
+          : quantities;
       let amount: Money;
 
       if (fee.feeType === "PERCENTAGE") {
@@ -37,12 +48,19 @@ export function calculateFees(
         }
         // Percentage base is already aggregate for the current quantity context.
         // Do not multiply again by fee.scope or the fee would be double-counted.
-        amount = applyBasisPoints(resolveBase(fee, pricing), fee.rateBps);
+        amount = applyBasisPoints(resolveBase(fee, feePricing), fee.rateBps);
+
+        if (fee.capAmountPerUnit !== undefined) {
+          amount = Math.min(
+            amount,
+            fee.capAmountPerUnit * feeQuantities.units,
+          );
+        }
       } else {
         if (fee.fixedAmount === undefined) {
           throw new Error(`Fixed fee ${fee.name} is missing fixedAmount.`);
         }
-        amount = fee.fixedAmount * scopeMultiplier(fee.scope, quantities);
+        amount = fee.fixedAmount * scopeMultiplier(fee.scope, feeQuantities);
       }
 
       return {

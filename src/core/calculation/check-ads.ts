@@ -28,7 +28,20 @@ export function checkAds(input: CheckAdsInput): CheckAdsResult {
   const quantities = {
     units: input.campaign.unitsSold,
     orders: input.campaign.orders,
+    ...(input.economics.fees.some(
+      (fee) => fee.active && fee.attribution === "SHOPEE_LIVE",
+    )
+      ? {
+          liveUnits:
+            input.campaign.liveUnitsSold ?? input.campaign.unitsSold,
+          liveOrders:
+            input.campaign.liveOrders ?? input.campaign.orders,
+        }
+      : {}),
   };
+  const hasLiveFee = input.economics.fees.some(
+    (fee) => fee.active && fee.attribution === "SHOPEE_LIVE",
+  );
   const breakdown = calculateContribution(input.economics, quantities);
 
   const totalAdvertisingCost =
@@ -88,6 +101,13 @@ export function checkAds(input: CheckAdsInput): CheckAdsResult {
   }
   if (input.campaign.unitsSold !== input.campaign.orders) {
     warnings.push({ code: "MULTI_UNIT_ORDER_ESTIMATE", severity: "INFO" });
+  }
+  if (
+    hasLiveFee &&
+    (input.campaign.liveOrders === undefined ||
+      input.campaign.liveUnitsSold === undefined)
+  ) {
+    warnings.push({ code: "LIVE_ATTRIBUTION_ESTIMATE", severity: "WARNING" });
   }
   if (Math.abs(input.campaign.attributedGmv - breakdown.pricing.effectiveRevenue) > 1) {
     warnings.push({ code: "GMV_UNIT_ECONOMICS_MISMATCH", severity: "WARNING" });

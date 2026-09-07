@@ -1,4 +1,9 @@
-import type { CheckAdsResult, PlanAdsInput, PlanAdsResult } from "../../domain/types";
+import type {
+  CheckAdsInput,
+  CheckAdsResult,
+  PlanAdsInput,
+  PlanAdsResult,
+} from "../../domain/types";
 
 export interface SavedCalculation {
   id: string;
@@ -6,6 +11,7 @@ export interface SavedCalculation {
   notes?: string;
   kind: "PLAN" | "CHECK";
   planInput: PlanAdsInput;
+  checkInput?: CheckAdsInput;
   planResult?: PlanAdsResult;
   checkResult?: CheckAdsResult;
   createdAt: string;

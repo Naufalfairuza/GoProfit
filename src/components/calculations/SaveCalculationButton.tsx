@@ -57,6 +57,7 @@ export function SaveCalculationButton({
         name: trimmedName,
         kind,
         planInput: checkInput?.economics ?? planInput,
+        checkInput: kind === "CHECK" ? checkInput : undefined,
         planResult: kind === "PLAN" ? planResult : undefined,
         checkResult: kind === "CHECK" ? checkResult : undefined,
         createdAt: now,

@@ -7,12 +7,15 @@ import type {
 } from "react";
 
 import {
+  useEffect,
   useRef,
   useState,
 } from "react";
 
 import { CurrencyInput } from "@/components/ui/CurrencyInput";
 import { SaveCalculationButton } from "@/components/calculations/SaveCalculationButton";
+import { ExportShareActions } from "@/components/calculations/ExportShareActions";
+import { AnimatedResult } from "@/components/ui/MotionPrimitives";
 
 import {
   CALCULATION_RULE_VERSION,
@@ -29,6 +32,19 @@ import type {
   TargetProfit,
 } from "@/domain/types";
 
+import {
+  areShopeeProgramDraftsReady,
+  buildShopeeProgramFees,
+  createShopeeProgramDrafts,
+  restoreShopeeProgramDrafts,
+  updateShopeeProgramDrafts,
+} from "@/config/marketplaces/shopee-programs";
+import type {
+  ShopeeProgramDraft,
+  ShopeeProgramId,
+} from "@/config/marketplaces/shopee-programs";
+import { BrowserScenarioRepository } from "@/services/persistence/browser-scenario.repository";
+
 import { ScenarioWorkspace } from "@/features/scenario/components/ScenarioWorkspace";
 
 import { FeeAndCostSection } from "./FeeAndCostSection";
@@ -40,6 +56,13 @@ type TargetProfitMode =
   | "AMOUNT_PER_ORDER"
   | "NET_MARGIN_PERCENT"
   | "HPP_MARKUP_PERCENT";
+
+const PLAN_SESSION_KEY = "goprofit.plan-session.v1";
+
+interface PlanSessionSnapshot {
+  input: PlanAdsInput;
+  result: PlanAdsResult;
+}
 
 export function PlanAdsForm() {
   const [hpp, setHpp] =
@@ -105,6 +128,10 @@ export function PlanAdsForm() {
       null,
     );
 
+  const [programs, setPrograms] = useState<ShopeeProgramDraft[]>(
+    createShopeeProgramDrafts,
+  );
+
   const [
     targetMode,
     setTargetMode,
@@ -153,6 +180,8 @@ export function PlanAdsForm() {
       null,
     );
 
+  const [restoredFromSession, setRestoredFromSession] = useState(false);
+
   const resultRef =
     useRef<HTMLDivElement>(
       null,
@@ -172,12 +201,152 @@ export function PlanAdsForm() {
   const canCalculate =
     hpp !== null &&
     listPrice !== null &&
-    targetValueReady;
+    targetValueReady &&
+    areShopeeProgramDraftsReady(programs);
+
+  const hasAnyInput =
+    hpp !== null ||
+    listPrice !== null ||
+    discount !== null ||
+    voucher !== null ||
+    adminFeeBps !== null ||
+    processFee !== null ||
+    packingCost !== null ||
+    programs.some((program) => program.enabled) ||
+    targetMode !== "NONE" ||
+    result !== null;
+
+  function applyPlanSnapshot(
+    input: PlanAdsInput,
+    savedResult?: PlanAdsResult,
+  ) {
+      const productDiscount = input.adjustments.find(
+        (adjustment) => adjustment.type === "PRODUCT_DISCOUNT",
+      );
+      const sellerVoucher = input.adjustments.find(
+        (adjustment) => adjustment.type === "SELLER_VOUCHER",
+      );
+      const adminFee = input.fees.find(
+        (fee) => fee.id === "marketplace-admin-fee",
+      );
+      const processFee = input.fees.find(
+        (fee) => fee.id === "marketplace-process-fee",
+      );
+      const packing = input.costs.find(
+        (cost) => cost.id === "packing-cost",
+      );
+
+      setHpp(input.hppPerUnit);
+      setListPrice(input.listPrice);
+      setShowDiscount(Boolean(productDiscount));
+      setDiscount(productDiscount?.amount ?? null);
+      setShowVoucher(Boolean(sellerVoucher));
+      setVoucher(sellerVoucher?.amount ?? null);
+      setAdminFeeBps(adminFee?.rateBps ?? null);
+      setProcessFee(processFee?.fixedAmount ?? null);
+      setPackingCost(packing?.amount ?? null);
+      setPrograms(restoreShopeeProgramDrafts(input.fees));
+
+      switch (input.targetProfit.mode) {
+        case "NONE":
+          setTargetMode("NONE");
+          setTargetAmount(null);
+          setTargetRateBps(null);
+          break;
+        case "AMOUNT_PER_ORDER":
+          setTargetMode("AMOUNT_PER_ORDER");
+          setTargetAmount(input.targetProfit.amount);
+          setTargetRateBps(null);
+          break;
+        case "NET_MARGIN_PERCENT":
+          setTargetMode("NET_MARGIN_PERCENT");
+          setTargetAmount(null);
+          setTargetRateBps(input.targetProfit.rateBps);
+          break;
+        case "HPP_MARKUP_PERCENT":
+          setTargetMode("HPP_MARKUP_PERCENT");
+          setTargetAmount(null);
+          setTargetRateBps(input.targetProfit.rateBps);
+          break;
+      }
+
+      setCalculatedInput(input);
+      setResult(savedResult ?? planAds(input));
+      setFormError(null);
+  }
+
+  useEffect(() => {
+    const restoreId = new URLSearchParams(window.location.search).get("restore");
+    let cancelled = false;
+
+    if (!restoreId) {
+      const rawSnapshot = window.sessionStorage.getItem(PLAN_SESSION_KEY);
+
+      if (rawSnapshot) {
+        try {
+          const snapshot = JSON.parse(rawSnapshot) as PlanSessionSnapshot;
+          window.queueMicrotask(() => {
+            if (cancelled) return;
+            applyPlanSnapshot(snapshot.input, snapshot.result);
+            setRestoredFromSession(true);
+          });
+        } catch {
+          window.sessionStorage.removeItem(PLAN_SESSION_KEY);
+        }
+      }
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    const repository = new BrowserScenarioRepository();
+
+    void repository.get(restoreId).then((saved) => {
+      if (cancelled || !saved || saved.kind !== "PLAN") return;
+
+      const snapshot: PlanSessionSnapshot = {
+        input: saved.planInput,
+        result: saved.planResult ?? planAds(saved.planInput),
+      };
+
+      applyPlanSnapshot(snapshot.input, snapshot.result);
+      setRestoredFromSession(false);
+      window.sessionStorage.setItem(PLAN_SESSION_KEY, JSON.stringify(snapshot));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function invalidateCalculation() {
     setResult(null);
     setCalculatedInput(null);
     setFormError(null);
+    setRestoredFromSession(false);
+    window.sessionStorage.removeItem(PLAN_SESSION_KEY);
+  }
+
+  function resetForm() {
+    setHpp(null);
+    setListPrice(null);
+    setShowDiscount(false);
+    setDiscount(null);
+    setShowVoucher(false);
+    setVoucher(null);
+    setAdminFeeBps(null);
+    setProcessFee(null);
+    setPackingCost(null);
+    setPrograms(createShopeeProgramDrafts());
+    setTargetMode("NONE");
+    setTargetAmount(null);
+    setTargetRateBps(null);
+    setResult(null);
+    setCalculatedInput(null);
+    setFormError(null);
+    setRestoredFromSession(false);
+    window.sessionStorage.removeItem(PLAN_SESSION_KEY);
   }
 
   function updateField<T>(
@@ -187,6 +356,14 @@ export function PlanAdsForm() {
     value: T,
   ) {
     setter(value);
+    invalidateCalculation();
+  }
+
+  function updateProgram(
+    id: ShopeeProgramId,
+    patch: Partial<ShopeeProgramDraft>,
+  ) {
+    setPrograms((current) => updateShopeeProgramDrafts(current, id, patch));
     invalidateCalculation();
   }
 
@@ -371,7 +548,7 @@ export function PlanAdsForm() {
       });
     }
 
-    return fees;
+    return [...fees, ...buildShopeeProgramFees(programs)];
   }
 
   function buildCosts():
@@ -432,6 +609,13 @@ export function PlanAdsForm() {
         "Masukkan Harga Normal terlebih dahulu.",
       );
 
+      return;
+    }
+
+    if (!areShopeeProgramDraftsReady(programs)) {
+      setResult(null);
+      setCalculatedInput(null);
+      setFormError("Lengkapi persentase program Shopee yang diaktifkan.");
       return;
     }
 
@@ -503,6 +687,15 @@ export function PlanAdsForm() {
 
     setResult(
       calculationResult,
+    );
+    setRestoredFromSession(false);
+
+    window.sessionStorage.setItem(
+      PLAN_SESSION_KEY,
+      JSON.stringify({
+        input,
+        result: calculationResult,
+      } satisfies PlanSessionSnapshot),
     );
 
     window.requestAnimationFrame(
@@ -733,6 +926,9 @@ export function PlanAdsForm() {
                 value,
               )
             }
+            programs={programs}
+            onProgramChange={updateProgram}
+            idPrefix="plan-program"
           />
 
           <TargetProfitSection
@@ -786,21 +982,42 @@ export function PlanAdsForm() {
           )}
 
           <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5 md:p-6">
-            <button
-              type="submit"
-              disabled={
-                !canCalculate
-              }
-              className={[
-                "flex min-h-12 w-full items-center justify-center rounded-[var(--gp-radius-button)] px-6",
-                "text-sm font-bold transition",
-                canCalculate
-                  ? "bg-[var(--gp-brand-primary)] text-white hover:bg-[var(--gp-brand-hover)]"
-                  : "cursor-not-allowed bg-[var(--gp-border)] text-[var(--gp-text-muted)]",
-              ].join(" ")}
-            >
-              Hitung ROAS Saya
-            </button>
+            {restoredFromSession && (
+              <div className="mb-4 rounded-xl border border-[var(--gp-info)] bg-[var(--gp-info-soft)] p-3">
+                <p className="text-xs font-bold text-[var(--gp-info)]">
+                  Perhitungan terakhir dipulihkan
+                </p>
+                <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
+                  Hasil tetap disimpan selama tab browser ini masih aktif. Klik
+                  &quot;Mulai ulang&quot; jika ingin membuat perhitungan baru.
+                </p>
+              </div>
+            )}
+
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+              <button
+                type="submit"
+                disabled={!canCalculate}
+                className={[
+                  "flex min-h-12 w-full items-center justify-center rounded-[var(--gp-radius-button)] px-6",
+                  "text-sm font-bold transition",
+                  canCalculate
+                    ? "bg-[var(--gp-brand-primary)] text-white hover:-translate-y-0.5 hover:bg-[var(--gp-brand-hover)] hover:shadow-[0_8px_20px_rgba(244,90,53,0.22)]"
+                    : "cursor-not-allowed bg-[var(--gp-border)] text-[var(--gp-text-muted)]",
+                ].join(" ")}
+              >
+                Hitung ROAS Saya
+              </button>
+
+              <button
+                type="button"
+                onClick={resetForm}
+                disabled={!hasAnyInput}
+                className="min-h-12 rounded-[var(--gp-radius-button)] border border-[var(--gp-border)] px-5 text-sm font-bold text-[var(--gp-text-secondary)] transition hover:border-[var(--gp-brand-primary)] hover:text-[var(--gp-brand-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Mulai ulang
+              </button>
+            </div>
 
             <p className="mt-3 text-center text-[11px] leading-5 text-[var(--gp-text-muted)]">
               GOProfit menghitung
@@ -817,16 +1034,24 @@ export function PlanAdsForm() {
         <aside ref={resultRef}>
           <div className="sticky top-6">
             {result ? (
-              <div className="space-y-3">
-                <PlanAdsResultPanel result={result} />
-                {calculatedInput && (
-                  <SaveCalculationButton
-                    kind="PLAN"
-                    planInput={calculatedInput}
-                    planResult={result}
-                  />
-                )}
-              </div>
+              <AnimatedResult>
+                <div className="space-y-3">
+                  <PlanAdsResultPanel result={result} />
+                  {calculatedInput && (
+                    <>
+                      <SaveCalculationButton
+                        kind="PLAN"
+                        planInput={calculatedInput}
+                        planResult={result}
+                      />
+                      <ExportShareActions
+                        kind="PLAN"
+                        planResult={result}
+                      />
+                    </>
+                  )}
+                </div>
+              </AnimatedResult>
             ) : (
               <InitialSummary />
             )}
@@ -930,6 +1155,9 @@ function getValidationMessage(
 
     case "FEE_RATE_INVALID":
       return "Persentase biaya marketplace tidak valid.";
+
+    case "FEE_CAP_INVALID":
+      return "Batas biaya per unit tidak valid.";
 
     case "FIXED_FEE_INVALID":
       return "Biaya proses pesanan tidak valid.";

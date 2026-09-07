@@ -7,11 +7,9 @@ export function formatPercentageFromBps(valueBps: number): string {
 }
 
 export function parsePercentageToBps(rawValue: string): number | null {
-  const normalized = rawValue
-    .replace(",", ".")
-    .replace(/[^\d.]/g, "");
+  const normalized = rawValue.trim().replace(/\s/g, "").replace(",", ".");
 
-  if (!normalized) {
+  if (!normalized || !/^\d*(\.\d*)?$/.test(normalized)) {
     return null;
   }
 

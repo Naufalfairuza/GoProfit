@@ -104,6 +104,29 @@ describe("planAds", () => {
     expect(result.breakdown.contributionBeforeAds).toBe(50_750);
   });
 
+  it("applies a program fee cap per sold unit", () => {
+    const input = basePlanInput();
+    input.fees.push({
+      id: "shopee-program-promo-xtra-plus",
+      name: "Promo XTRA+",
+      feeType: "PERCENTAGE",
+      rateBps: 650,
+      capAmountPerUnit: 5_000,
+      calculationBase: "EFFECTIVE_SELLING_PRICE",
+      scope: "PER_ORDER",
+      source: "CUSTOM",
+      active: true,
+    });
+
+    const result = planAds(input);
+    const programFee = result.breakdown.fees.items.find(
+      (item) => item.feeId === "shopee-program-promo-xtra-plus",
+    );
+
+    expect(programFee?.amount).toBe(5_000);
+    expect(result.breakdown.contributionBeforeAds).toBe(49_750);
+  });
+
   it("TC-007 returns NOT_ADS_FEASIBLE for zero contribution", () => {
     const input = basePlanInput();
     input.listPrice = 100_000;

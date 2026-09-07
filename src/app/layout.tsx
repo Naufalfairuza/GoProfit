@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { AppHeader } from "@/components/layout/AppHeader";
+import { LegalFooter } from "@/components/layout/LegalFooter";
 
 import "./globals.css";
 
@@ -21,9 +22,10 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className="antialiased">
-        <div className="min-h-screen bg-[var(--gp-background)]">
+        <div className="gp-shell min-h-screen">
           <AppHeader />
           {children}
+          <LegalFooter />
         </div>
       </body>
     </html>
