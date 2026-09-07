@@ -41,6 +41,18 @@ export default function PrivacyPage() {
           </p>
         </PolicySection>
 
+        <PolicySection title="Analytics dan error monitoring">
+          <p>
+            Jika Web Analytics diaktifkan pada project Vercel, layanan tersebut
+            dapat memproses data kunjungan yang dianonimkan seperti halaman,
+            perangkat, dan sumber kunjungan. GOProfit tidak mengirim angka
+            produk, biaya, campaign, atau isi perhitungan sebagai properti
+            analytics. Jika Sentry diaktifkan, error teknis dan konteks teknis
+            yang diperlukan untuk debugging dapat dikirim; konfigurasi GOProfit
+            tidak mengaktifkan session replay.
+          </p>
+        </PolicySection>
+
         <PolicySection title="Disclaimer kalkulator">
           <p>
             Hasil GOProfit adalah estimasi berdasarkan input pengguna dan
@@ -53,9 +65,8 @@ export default function PrivacyPage() {
 
         <PolicySection title="Perubahan kebijakan">
           <p>
-            Saat login, database, analytics, atau error monitoring ditambahkan,
-            halaman ini akan diperbarui untuk menjelaskan data dan layanan
-            pihak ketiga yang digunakan.
+            Saat login, database, atau layanan pihak ketiga berubah, halaman ini
+            akan diperbarui untuk menjelaskan data dan layanan yang digunakan.
           </p>
         </PolicySection>
       </div>

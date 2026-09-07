@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 import { AppHeader } from "@/components/layout/AppHeader";
 import { LegalFooter } from "@/components/layout/LegalFooter";
@@ -26,6 +27,7 @@ export default function RootLayout({
           <AppHeader />
           {children}
           <LegalFooter />
+          <Analytics />
         </div>
       </body>
     </html>
