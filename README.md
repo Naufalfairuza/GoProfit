@@ -1,8 +1,19 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GOProfit
 
-## Getting Started
+GOProfit adalah kalkulator ekonomi iklan untuk seller marketplace. MVP saat ini
+fokus pada Shopee Indonesia dan menyediakan Plan My Ads untuk menghitung ROAS
+aman serta Check My Ads untuk mengecek profit campaign setelah HPP, fee, dan
+biaya iklan.
 
-First, run the development server:
+Fee marketplace tidak di-hardcode karena dapat berbeda menurut kategori,
+program, dan kondisi seller. Isi berdasarkan rincian tokomu sendiri.
+
+Dokumentasi produk ada di [`docs/PRD.md`](docs/PRD.md) dan model data di
+[`docs/ERD.md`](docs/ERD.md).
+
+## Menjalankan project
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -14,11 +25,17 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Useful checks:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run typecheck
+npm run test:run
+npm run e2e
+```
+
+The main application routes are `/plan`, `/check`, `/saved`, and `/learn`.
 
 ## Learn More
 
