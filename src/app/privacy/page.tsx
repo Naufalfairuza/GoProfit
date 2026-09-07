@@ -53,6 +53,16 @@ export default function PrivacyPage() {
           </p>
         </PolicySection>
 
+        <PolicySection title="Laporan masalah dan feedback">
+          <p>
+            Jika kamu mengirim laporan melalui tombol “Laporkan masalah”,
+            GOProfit mengirimkan pesan, kategori masalah, halaman yang sedang
+            dibuka, dan email kontak jika kamu mengisinya ke Sentry untuk
+            membantu proses perbaikan. Jangan masukkan password, token, atau
+            data sensitif toko ke dalam laporan.
+          </p>
+        </PolicySection>
+
         <PolicySection title="Disclaimer kalkulator">
           <p>
             Hasil GOProfit adalah estimasi berdasarkan input pengguna dan

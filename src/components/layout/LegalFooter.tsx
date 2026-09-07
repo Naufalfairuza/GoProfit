@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { ReportIssueButton } from "@/components/feedback/ReportIssueButton";
+
 export function LegalFooter() {
   return (
     <footer className="mx-auto mt-10 w-full max-w-[1180px] px-4 pb-8 md:px-6">
@@ -9,12 +11,15 @@ export function LegalFooter() {
           bukan laporan akuntansi atau jaminan hasil campaign.
         </p>
 
-        <Link
-          href="/privacy"
-          className="shrink-0 font-semibold text-[var(--gp-text-secondary)] underline-offset-4 hover:text-[var(--gp-brand-primary)] hover:underline"
-        >
-          Privacy & disclaimer
-        </Link>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <ReportIssueButton />
+          <Link
+            href="/privacy"
+            className="shrink-0 font-semibold text-[var(--gp-text-secondary)] underline-offset-4 hover:text-[var(--gp-brand-primary)] hover:underline"
+          >
+            Privacy & disclaimer
+          </Link>
+        </div>
       </div>
     </footer>
   );

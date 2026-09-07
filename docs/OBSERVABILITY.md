@@ -27,3 +27,11 @@ The app is intentionally disabled when these variables are absent, so local
 development and deployments without Sentry credentials continue to work.
 The configuration samples 10% of performance traces and does not enable
 session replay.
+
+## Feedback pengguna
+
+Tombol `Laporkan masalah` mengirim feedback secara langsung ke Sentry melalui
+`captureFeedback`. Data yang dikirim hanya pesan, kategori, halaman, dan email
+kontak jika pengguna memilih mengisinya. Form tidak mengirim nilai input
+kalkulator secara otomatis. Jangan meminta pengguna menulis password, token,
+atau data sensitif toko di kolom feedback.
