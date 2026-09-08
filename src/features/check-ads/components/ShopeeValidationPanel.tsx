@@ -117,7 +117,7 @@ export function ShopeeValidationPanel({
           </h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--gp-text-secondary)]">
             Masukkan angka dari Seller Centre untuk periode dan campaign yang
-            sama. GOProfit akan membandingkan profit aktual dengan estimasi di
+            sama. GOProfit akan membandingkan untung aktual dengan perkiraan di
             atas.
           </p>
         </div>
@@ -139,7 +139,7 @@ export function ShopeeValidationPanel({
               Cara mengisi
             </p>
             <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
-              Nilai awal mengikuti input campaign dan estimasi GOProfit. Ganti
+              Nilai awal mengikuti input campaign dan perkiraan GOProfit. Ganti
               dengan angka Seller Centre yang benar-benar kamu lihat. Jangan
               masukkan password, token, atau data login.
             </p>
@@ -274,10 +274,10 @@ function ComparisonResult({
 
   const differenceLabel =
     comparison.difference > 0
-      ? "Profit aktual lebih tinggi dari estimasi"
+      ? "Untung aktual lebih tinggi dari perkiraan"
       : comparison.difference < 0
-        ? "Profit aktual lebih rendah dari estimasi"
-        : "Profit aktual sama dengan estimasi";
+        ? "Untung aktual lebih rendah dari perkiraan"
+        : "Untung aktual sama dengan perkiraan";
 
   return (
     <div className="mt-6 rounded-2xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
@@ -287,12 +287,12 @@ function ComparisonResult({
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <ValidationMetric
-          label="Profit aktual"
+          label="Untung aktual"
           value={formatMoney(comparison.actualProfit)}
           strong
         />
         <ValidationMetric
-          label="Estimasi GOProfit"
+          label="Perkiraan GOProfit"
           value={formatMoney(comparison.estimatedProfit)}
         />
         <ValidationMetric

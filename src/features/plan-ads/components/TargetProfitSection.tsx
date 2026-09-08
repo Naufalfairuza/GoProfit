@@ -32,16 +32,16 @@ export function TargetProfitSection({
     <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5 md:p-6">
       <div className="border-b border-[var(--gp-border)] pb-5">
         <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-          3. Target Profit
+          3. Target Untung
         </p>
 
         <h2 className="mt-2 text-xl font-bold tracking-[-0.03em]">
-          Mau mempertahankan profit berapa?
+          Mau mendapatkan untung berapa?
         </h2>
 
         <p className="mt-2 text-sm leading-6 text-[var(--gp-text-secondary)]">
-          Target bersifat opsional. Kalau belum tahu, GOProfit tetap dapat
-          menghitung ROAS impas.
+          Target ini boleh dikosongkan. Kalau belum tahu, GOProfit tetap bisa
+          menghitung batas agar iklan tidak membuat produk rugi.
         </p>
       </div>
 
@@ -55,22 +55,22 @@ export function TargetProfitSection({
 
         <TargetOption
           checked={mode === "AMOUNT_PER_ORDER"}
-          title="Rupiah / order"
-          description="Contoh target Rp25.000."
+          title="Rupiah / pesanan"
+          description="Contoh: ingin untung Rp25.000 per pesanan."
           onClick={() => onModeChange("AMOUNT_PER_ORDER")}
         />
 
         <TargetOption
           checked={mode === "NET_MARGIN_PERCENT"}
-          title="Net Margin"
-          description="Target profit dari omzet."
+          title="Persentase omzet"
+          description="Target untung berdasarkan omzet."
           onClick={() => onModeChange("NET_MARGIN_PERCENT")}
         />
 
         <TargetOption
           checked={mode === "HPP_MARKUP_PERCENT"}
-          title="% dari HPP"
-          description="Target profit berdasarkan modal."
+          title="% dari modal"
+          description="Target untung berdasarkan modal."
           onClick={() => onModeChange("HPP_MARKUP_PERCENT")}
         />
       </div>
@@ -80,7 +80,7 @@ export function TargetProfitSection({
           {mode === "AMOUNT_PER_ORDER" ? (
             <CurrencyInput
               id="target-profit-amount"
-              label="Target Profit / Order"
+              label="Target untung / pesanan"
               value={amount}
               onValueChange={onAmountChange}
               placeholder="Rp25.000"
@@ -90,8 +90,8 @@ export function TargetProfitSection({
               id="target-profit-rate"
               label={
                 mode === "NET_MARGIN_PERCENT"
-                  ? "Target Net Margin"
-                  : "Target Profit dari HPP"
+                  ? "Target untung dari omzet"
+                  : "Target untung dari modal"
               }
               valueBps={rateBps}
               onValueChange={onRateChange}

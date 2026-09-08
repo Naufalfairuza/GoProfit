@@ -206,7 +206,7 @@ export function ScenarioWorkspace({
               ...scenario,
 
               error:
-                "Lengkapi harga, HPP, dan nilai Target Profit yang kamu pilih.",
+                "Lengkapi harga, HPP, dan nilai target untung yang kamu pilih.",
 
               dirty:
                 true,
@@ -325,7 +325,7 @@ export function ScenarioWorkspace({
         <div className="flex flex-col justify-between gap-4 border-b border-[var(--gp-border)] pb-5 md:flex-row md:items-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-              Scenario Comparison
+              Bandingkan Skenario
             </p>
 
             <h2 className="mt-2 text-2xl font-bold tracking-[-0.04em]">
@@ -333,9 +333,9 @@ export function ScenarioWorkspace({
             </h2>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--gp-text-secondary)]">
-              Clone perhitungan saat ini,
+              Salin hitungan saat ini,
               ubah harga, biaya, potongan,
-              atau target profit, lalu
+              atau target untung, lalu
               bandingkan dampaknya.
             </p>
           </div>
@@ -361,7 +361,7 @@ export function ScenarioWorkspace({
 
             <p className="mt-2 text-center text-[10px] text-[var(--gp-text-muted)]">
               {scenarios.length}/
-              {maxScenarios} scenario
+              {maxScenarios} skenario
             </p>
           </div>
         </div>
@@ -375,12 +375,12 @@ export function ScenarioWorkspace({
               <div className="mt-5 rounded-xl bg-[var(--gp-brand-soft)] px-4 py-3">
                 <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
                   Maksimal tiga
-                  scenario dapat
+                  skenario dapat
                   dibandingkan
                   sekaligus. Hapus
                   salah satu jika
                   ingin membuat
-                  scenario baru.
+                  skenario baru.
                 </p>
               </div>
             )}
@@ -508,7 +508,7 @@ function ScenarioEditor({
               htmlFor={`${draft.id}-name`}
               className="text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--gp-text-muted)]"
             >
-              Nama Scenario
+              Nama Skenario
             </label>
 
             <input
@@ -537,7 +537,7 @@ function ScenarioEditor({
 
             <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
               Semua nilai awal
-              dicopy dari Current.
+              disalin dari hitungan utama.
               Perubahan di sini
               tidak mengubah
               perhitungan utama.
@@ -554,7 +554,7 @@ function ScenarioEditor({
               }
               className="rounded-lg border border-[var(--gp-border)] bg-white px-3 py-2 text-xs font-semibold text-[var(--gp-text-secondary)] transition hover:text-[var(--gp-text-primary)]"
             >
-              Reset ke Current
+              Kembalikan ke hitungan utama
             </button>
 
             <button
@@ -597,7 +597,7 @@ function ScenarioEditor({
             <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               <CurrencyInput
                 id={`${draft.id}-price`}
-                label="Harga Normal"
+                label="Harga jual"
                 value={
                   draft.listPrice
                 }
@@ -698,8 +698,8 @@ function ScenarioEditor({
 
               <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
                 Potongan ini hanya
-                memengaruhi Scenario,
-                bukan Current.
+                memengaruhi skenario ini,
+                bukan hitungan utama.
               </p>
 
               <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -826,14 +826,14 @@ function ScenarioEditor({
 
             <div className="mt-6 border-t border-[var(--gp-border)] pt-5">
               <p className="text-sm font-bold">
-                Target Profit Scenario
+                Target untung skenario
               </p>
 
               <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
-                Default mengikuti
-                Current, tetapi bisa
+                Default mengikuti hitungan saat ini,
+                tetapi bisa
                 diubah khusus untuk
-                scenario ini.
+                skenario ini.
               </p>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -855,7 +855,7 @@ function ScenarioEditor({
                     draft.targetMode ===
                     "AMOUNT_PER_ORDER"
                   }
-                  title="Rp / order"
+                  title="Rp / pesanan"
                   onClick={() =>
                     changeTargetMode(
                       "AMOUNT_PER_ORDER",
@@ -868,7 +868,7 @@ function ScenarioEditor({
                     draft.targetMode ===
                     "NET_MARGIN_PERCENT"
                   }
-                  title="Net Margin"
+                  title="Persentase omzet"
                   onClick={() =>
                     changeTargetMode(
                       "NET_MARGIN_PERCENT",
@@ -881,7 +881,7 @@ function ScenarioEditor({
                     draft.targetMode ===
                     "HPP_MARKUP_PERCENT"
                   }
-                  title="% HPP"
+                  title="% dari modal"
                   onClick={() =>
                     changeTargetMode(
                       "HPP_MARKUP_PERCENT",
@@ -897,7 +897,7 @@ function ScenarioEditor({
                   "AMOUNT_PER_ORDER" ? (
                     <CurrencyInput
                       id={`${draft.id}-target-amount`}
-                      label="Target Profit / Order"
+                      label="Target untung / pesanan"
                       value={
                         draft.targetAmount
                       }
@@ -920,8 +920,8 @@ function ScenarioEditor({
                       label={
                         draft.targetMode ===
                         "NET_MARGIN_PERCENT"
-                          ? "Target Net Margin"
-                          : "Target Profit dari HPP"
+                          ? "Target untung dari omzet"
+                          : "Target untung dari modal"
                       }
                       valueBps={
                         draft.targetRateBps
@@ -1008,7 +1008,7 @@ function ScenarioCollapsedSummary({
       />
 
       <MiniMetric
-        label="Profit sebelum iklan"
+        label="Untung sebelum iklan"
         value={
           scenario.dirty
             ? "Hitung ulang"
@@ -1146,7 +1146,7 @@ function ScenarioComparison({
   return (
     <div className="mt-8 border-t border-[var(--gp-border)] pt-7">
       <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-        Comparison
+        Perbandingan
       </p>
 
       <h3 className="mt-2 text-xl font-bold">
@@ -1154,17 +1154,17 @@ function ScenarioComparison({
       </h3>
 
       <p className="mt-1 max-w-3xl text-sm leading-6 text-[var(--gp-text-secondary)]">
-        Hanya scenario yang sudah
+        Hanya skenario yang sudah
         dihitung yang masuk ke
-        comparison. Label profit
+        perbandingan. Label untung
         terbesar membandingkan
-        contribution sebelum iklan,
+        sisa sebelum iklan,
         bukan rekomendasi.
       </p>
 
       <div className="mt-5 flex gap-4 overflow-x-auto pb-3">
         <ComparisonCard
-          name="Current"
+          name="Saat ini"
           input={
             baseInput
           }
@@ -1214,7 +1214,7 @@ function ScenarioComparison({
           scenario.dirty,
       ) && (
         <p className="mt-2 text-xs leading-5 text-[var(--gp-warning)]">
-          Ada perubahan scenario
+                  Ada perubahan skenario
           yang belum dihitung.
           Klik Hitung Skenario agar
           hasil terbaru masuk ke
@@ -1301,7 +1301,7 @@ function ComparisonCard({
         />
 
         <CompareRow
-          label="HPP"
+          label="Modal / HPP"
           value={
             formatMoney(
               input.hppPerUnit,
@@ -1310,7 +1310,7 @@ function ComparisonCard({
         />
 
         <CompareRow
-          label="Target Profit"
+          label="Target untung"
           value={
             formatTargetProfit(
               input,
@@ -1319,7 +1319,7 @@ function ComparisonCard({
         />
 
         <CompareRow
-          label="Profit sebelum iklan"
+          label="Untung sebelum iklan"
           value={
             formatMoney(
               result.breakdown
@@ -1395,11 +1395,11 @@ function ScenarioEmptyState() {
       </p>
 
       <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-[var(--gp-text-secondary)]">
-        Buat Scenario A dari
+        Buat Skenario A dari
         hasil perhitunganmu saat
         ini, lalu coba ubah harga,
         biaya, potongan, atau
-        target profit.
+        target untung.
       </p>
     </div>
   );
@@ -1466,14 +1466,14 @@ function getDefaultScenarioName(
     );
 
   const names = [
-    "Scenario A",
-    "Scenario B",
-    "Scenario C",
+    "Skenario A",
+    "Skenario B",
+    "Skenario C",
   ];
 
   return (
     names[number - 1] ??
-    `Scenario ${number}`
+    `Skenario ${number}`
   );
 }
 
@@ -1517,16 +1517,16 @@ function getScenarioStatusLabel(
     result.status
   ) {
     case "TARGET_FEASIBLE":
-      return "Target feasible";
+      return "Target tercapai";
 
     case "BREAK_EVEN_ONLY":
-      return "BEP saja";
+      return "Hanya menutup biaya";
 
     case "TARGET_NOT_FEASIBLE":
-      return "Target belum memungkinkan";
+      return "Target belum tercapai";
 
     case "NOT_ADS_FEASIBLE":
-      return "Belum layak ads";
+      return "Belum siap untuk iklan";
   }
 }
 
@@ -1549,7 +1549,7 @@ function formatTargetProfit(
   ) {
     return `${formatMoney(
       target.amount,
-    )} / order`;
+    )} / pesanan`;
   }
 
   if (
@@ -1621,34 +1621,34 @@ function getScenarioValidationMessage(
 ): string {
   switch (code) {
     case "LIST_PRICE_INVALID":
-      return "Harga scenario harus lebih besar dari Rp0.";
+      return "Harga skenario harus lebih besar dari Rp0.";
 
     case "HPP_INVALID":
-      return "Modal / HPP scenario tidak valid.";
+      return "Modal / HPP skenario tidak valid.";
 
     case "ADJUSTMENT_INVALID":
-      return "Diskon atau voucher scenario tidak valid.";
+      return "Diskon atau voucher skenario tidak valid.";
 
     case "DISCOUNT_EXCEEDS_PRICE":
-      return "Diskon scenario tidak boleh lebih besar dari Harga Normal.";
+      return "Diskon skenario tidak boleh lebih besar dari harga jual.";
 
     case "EFFECTIVE_PRICE_NON_POSITIVE":
-      return "Potongan scenario membuat harga efektif menjadi Rp0 atau negatif.";
+      return "Potongan skenario membuat harga efektif menjadi Rp0 atau negatif.";
 
     case "FEE_RATE_INVALID":
-      return "Persentase biaya scenario tidak valid.";
+      return "Persentase biaya skenario tidak valid.";
 
     case "FIXED_FEE_INVALID":
-      return "Biaya tetap scenario tidak valid.";
+      return "Biaya tetap skenario tidak valid.";
 
     case "COST_INVALID":
-      return "Biaya operasional scenario tidak valid.";
+      return "Biaya operasional skenario tidak valid.";
 
     case "TARGET_AMOUNT_INVALID":
-      return "Target Profit scenario tidak valid.";
+      return "Target untung skenario tidak valid.";
 
     case "TARGET_RATE_INVALID":
-      return "Persentase Target Profit scenario tidak valid.";
+      return "Persentase target untung skenario tidak valid.";
 
     default:
       return "Skenario belum valid. Periksa kembali angka yang kamu masukkan.";

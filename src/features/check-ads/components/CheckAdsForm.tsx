@@ -706,7 +706,7 @@ export function CheckAdsForm() {
       listPrice === null ||
       listPrice <= 0
     ) {
-      return "Harga Normal harus lebih besar dari Rp0.";
+      return "Harga jual harus lebih besar dari Rp0.";
     }
 
     if (
@@ -720,14 +720,14 @@ export function CheckAdsForm() {
       mediaAdSpend === null ||
       mediaAdSpend < 0
     ) {
-      return "Ad Spend tidak boleh bernilai negatif.";
+      return "Biaya iklan tidak boleh bernilai negatif.";
     }
 
     if (
       attributedGmv === null ||
       attributedGmv < 0
     ) {
-      return "GMV dari Ads tidak boleh bernilai negatif.";
+      return "Penjualan dari iklan tidak boleh bernilai negatif.";
     }
 
     if (
@@ -746,7 +746,7 @@ export function CheckAdsForm() {
 
     if (liveProgramEnabled) {
       if (liveOrders === null || liveOrders < 0 || liveOrders > orders) {
-        return "Orders dari Shopee Live harus diisi dan tidak boleh melebihi total Orders.";
+        return "Pesanan dari Shopee Live harus diisi dan tidak boleh melebihi total pesanan.";
       }
 
       if (
@@ -754,7 +754,7 @@ export function CheckAdsForm() {
         liveUnitsSold < 0 ||
         liveUnitsSold > unitsSold
       ) {
-        return "Units dari Shopee Live harus diisi dan tidak boleh melebihi total Units Sold.";
+        return "Barang dari Shopee Live harus diisi dan tidak boleh melebihi total barang terjual.";
       }
     }
 
@@ -779,7 +779,7 @@ export function CheckAdsForm() {
         orders !== null &&
           liveOrders > orders)
     ) {
-      return "Orders dari Shopee Live tidak valid.";
+      return "Pesanan dari Shopee Live tidak valid.";
     }
 
     if (
@@ -788,7 +788,7 @@ export function CheckAdsForm() {
         unitsSold !== null &&
           liveUnitsSold > unitsSold)
     ) {
-      return "Units dari Shopee Live tidak valid.";
+      return "Barang dari Shopee Live tidak valid.";
     }
 
     if (
@@ -834,7 +834,7 @@ export function CheckAdsForm() {
       setResult(null);
 
       setFormError(
-        "Lengkapi nilai Target Profit yang kamu pilih.",
+        "Lengkapi nilai target untung yang kamu pilih.",
       );
 
       return;
@@ -994,13 +994,13 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="Rp80.000"
-              helperText="Modal untuk satu unit produk."
+              helperText="Modal untuk satu barang."
               required
             />
 
             <CurrencyInput
               id="check-list-price"
-              label="Harga Normal"
+              label="Harga jual"
               value={
                 listPrice
               }
@@ -1013,7 +1013,7 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="Rp150.000"
-              helperText="Harga normal untuk satu unit."
+              helperText="Harga sebelum diskon atau voucher toko."
               required
             />
           </div>
@@ -1206,27 +1206,23 @@ export function CheckAdsForm() {
         <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5 md:p-6">
           <div className="border-b border-[var(--gp-border)] pb-5">
             <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-              4. Performa Iklan
+              4. Hasil Iklan
             </p>
 
             <h2 className="mt-2 text-xl font-bold tracking-[-0.03em]">
-              Masukkan hasil campaign
+              Masukkan hasil iklan dari Shopee
             </h2>
 
             <p className="mt-2 text-sm leading-6 text-[var(--gp-text-secondary)]">
-              Gunakan data pada
-              periode campaign
-              yang sama agar
-              estimasi profit
-              tidak tercampur
-              antarperiode.
+              Gunakan data dari periode yang sama agar hasilnya tidak tercampur
+              dengan periode lain.
             </p>
           </div>
 
           <div className="mt-6 grid gap-5 md:grid-cols-2">
             <CurrencyInput
               id="check-media-ad-spend"
-              label="Ad Spend"
+              label="Biaya iklan (Ad Spend)"
               value={
                 mediaAdSpend
               }
@@ -1245,7 +1241,7 @@ export function CheckAdsForm() {
 
             <CurrencyInput
               id="check-attributed-gmv"
-              label="GMV dari Ads"
+              label="Penjualan dari iklan (GMV Ads)"
               value={
                 attributedGmv
               }
@@ -1258,13 +1254,13 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="Rp750.000"
-              helperText="GMV yang diatribusikan marketplace ke iklan."
+              helperText="Penjualan yang dicatat Shopee berasal dari iklan."
               required
             />
 
             <NumberInput
               id="check-orders"
-              label="Orders"
+              label="Pesanan (Orders)"
               value={
                 orders
               }
@@ -1277,13 +1273,13 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="5"
-              helperText="Jumlah pesanan dari campaign."
+              helperText="Jumlah pesanan yang berasal dari iklan."
               required
             />
 
             <NumberInput
               id="check-units-sold"
-              label="Units Sold"
+              label="Barang terjual (Units Sold)"
               value={
                 unitsSold
               }
@@ -1296,7 +1292,7 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="5"
-              helperText="Boleh lebih besar dari Orders jika satu pesanan berisi beberapa unit."
+              helperText="Bisa lebih banyak dari pesanan jika satu pesanan berisi beberapa barang."
               required
             />
 
@@ -1304,7 +1300,7 @@ export function CheckAdsForm() {
               <>
                 <NumberInput
                   id="check-live-orders"
-                  label="Orders dari Shopee Live"
+                  label="Pesanan dari Shopee Live"
                   value={liveOrders}
                   onValueChange={(value) =>
                     updateField(setLiveOrders, value)
@@ -1316,13 +1312,13 @@ export function CheckAdsForm() {
 
                 <NumberInput
                   id="check-live-units-sold"
-                  label="Units dari Shopee Live"
+                  label="Barang dari Shopee Live"
                   value={liveUnitsSold}
                   onValueChange={(value) =>
                     updateField(setLiveUnitsSold, value)
                   }
                   placeholder="3"
-                  helperText="Unit dari Live yang termasuk kategori eligible."
+                  helperText="Barang dari Live yang masuk hitungan."
                   required
                 />
               </>
@@ -1330,7 +1326,7 @@ export function CheckAdsForm() {
 
             <NumberInput
               id="check-clicks"
-              label="Clicks (Opsional)"
+              label="Klik iklan (Opsional)"
               value={
                 clicks
               }
@@ -1343,12 +1339,12 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="120"
-              helperText="Jika diisi, GOProfit juga menghitung CPC."
+              helperText="Jika diisi, GOProfit juga menghitung biaya per klik (CPC)."
             />
 
             <CurrencyInput
               id="check-additional-ad-cost"
-              label="Biaya Iklan Tambahan (Opsional)"
+              label="Biaya iklan tambahan (Opsional)"
               value={
                 additionalAdCost
               }
@@ -1361,18 +1357,14 @@ export function CheckAdsForm() {
                 )
               }
               placeholder="Rp0"
-              helperText="Biaya campaign lain di luar media ad spend. Kosong dianggap Rp0."
+              helperText="Biaya iklan lain di luar biaya iklan utama. Kosong dianggap Rp0."
             />
           </div>
 
           <div className="mt-5 rounded-xl bg-[var(--gp-brand-soft)] p-4">
             <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
-              GOProfit membedakan
-              ROAS yang dilaporkan
-              marketplace dari
-              Economic ROAS jika
-              ada biaya iklan
-              tambahan.
+              GOProfit menampilkan ROAS dari Shopee dan ROAS setelah semua biaya
+              jika ada biaya iklan tambahan.
             </p>
           </div>
         </section>
@@ -1507,28 +1499,28 @@ function CheckInitialSummary() {
         GOProfit akan
         memperkirakan apakah
         campaign benar-benar
-        menghasilkan profit
+        menghasilkan untung
         setelah biaya iklan.
       </p>
 
       <div className="mt-5 space-y-4">
         <SummaryItem
-          title="Estimated Profit After Ads"
-          description="Sisa contribution setelah total biaya iklan."
+          title="Untung setelah iklan"
+          description="Sisa uang setelah semua biaya iklan dibayar."
         />
 
         <SummaryItem
           title="ROAS & ACOS"
-          description="Bandingkan metrik marketplace dengan ekonomi sebenarnya."
+          description="Bandingkan angka dari Shopee dengan untung sebenarnya."
         />
 
         <SummaryItem
-          title="CPA & CPC"
-          description="Lihat biaya per order dan per klik jika datanya tersedia."
+          title="Biaya per pesanan & klik"
+          description="Lihat biaya per pesanan dan per klik jika datanya tersedia."
         />
 
         <SummaryItem
-          title="Target Profit"
+          title="Target untung"
           description="Cek apakah hasil campaign sudah mencapai targetmu."
         />
       </div>
@@ -1544,11 +1536,11 @@ function CheckAdsPreview({
   return (
     <div className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
       <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-        Estimated Result
+        Perkiraan hasil
       </p>
 
       <p className="mt-3 text-xs font-semibold text-[var(--gp-text-secondary)]">
-        Estimated Profit After Ads
+        Perkiraan untung setelah iklan
       </p>
 
       <p className="mt-1 text-4xl font-bold tracking-[-0.06em] text-[var(--gp-text-primary)]">
@@ -1567,7 +1559,7 @@ function CheckAdsPreview({
 
       <div className="mt-5 space-y-3">
         <MetricRow
-          label="Reported ROAS"
+          label="ROAS dari Shopee"
           value={
             formatRoas(
               result.reportedRoas,
@@ -1576,7 +1568,7 @@ function CheckAdsPreview({
         />
 
         <MetricRow
-          label="Economic ROAS"
+          label="ROAS setelah semua biaya"
           value={
             formatRoas(
               result.economicRoas,
@@ -1585,7 +1577,7 @@ function CheckAdsPreview({
         />
 
         <MetricRow
-          label="Economic ACOS"
+          label="ACOS setelah semua biaya"
           value={
             formatBps(
               result.economicAcosBps,
@@ -1612,7 +1604,7 @@ function CheckAdsPreview({
         />
 
         <MetricRow
-          label="Profit / Order"
+          label="Untung / pesanan"
           value={
             formatOptionalMoney(
               result.estimatedProfitPerOrder,
@@ -1771,15 +1763,15 @@ function formatDiagnosis(
       return "Campaign masih rugi";
 
     case "BREAK_EVEN":
-      return "Campaign berada di titik impas";
+      return "Campaign hanya menutup biaya";
 
     case "PROFITABLE":
-      return "Campaign menghasilkan profit";
+      return "Campaign masih menghasilkan untung";
 
     case "BELOW_TARGET":
-      return "Profit positif, tetapi belum mencapai target";
+      return "Masih untung, tetapi belum mencapai target";
 
     case "TARGET_MET":
-      return "Target profit tercapai";
+      return "Target untung tercapai";
   }
 }

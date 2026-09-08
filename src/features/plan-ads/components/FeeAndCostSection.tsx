@@ -43,7 +43,7 @@ export function FeeAndCostSection({
       <div className="border-b border-[var(--gp-border)] pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-            2. Biaya & Program Toko
+            2. Biaya Shopee & Program Toko
           </p>
 
           <span className="rounded-full bg-[var(--gp-brand-soft)] px-3 py-1 text-[11px] font-bold text-[var(--gp-brand-primary)]">
@@ -52,19 +52,19 @@ export function FeeAndCostSection({
         </div>
 
         <h2 className="mt-2 text-xl font-bold tracking-[-0.03em]">
-          Masukkan biaya yang berlaku
+          Masukkan biaya yang dikenakan
         </h2>
 
         <p className="mt-2 text-sm leading-6 text-[var(--gp-text-secondary)]">
-          Isi berdasarkan rincian biaya tokomu agar hasil perhitungan tidak
-          menggunakan asumsi seller lain.
+          Isi sesuai rincian biaya tokomu agar hasilnya tidak memakai
+          perkiraan dari toko lain.
         </p>
       </div>
 
       <div className="mt-6 grid gap-5 md:grid-cols-2">
         <PercentageInput
           id="admin-fee"
-          label="Biaya Admin Marketplace"
+          label="Biaya admin Shopee"
           valueBps={adminFeeBps}
           onValueChange={onAdminFeeChange}
           placeholder="8"
@@ -77,7 +77,7 @@ export function FeeAndCostSection({
           value={processFee}
           onValueChange={onProcessFeeChange}
           placeholder="Rp1.250"
-          helperText="Biaya tetap yang dikenakan per order."
+          helperText="Biaya tetap yang dikenakan untuk setiap pesanan."
         />
 
         <CurrencyInput
@@ -86,7 +86,7 @@ export function FeeAndCostSection({
           value={packingCost}
           onValueChange={onPackingCostChange}
           placeholder="Rp2.000"
-          helperText="Plastik, kardus, bubble wrap, atau biaya packing lainnya."
+          helperText="Plastik, kardus, bubble wrap, atau biaya kemasan lainnya."
         />
       </div>
 

@@ -606,7 +606,7 @@ export function PlanAdsForm() {
       setCalculatedInput(null);
 
       setFormError(
-        "Masukkan Harga Normal terlebih dahulu.",
+        "Masukkan harga jual terlebih dahulu.",
       );
 
       return;
@@ -627,7 +627,7 @@ export function PlanAdsForm() {
       setCalculatedInput(null);
 
       setFormError(
-        "Lengkapi nilai Target Profit yang kamu pilih.",
+        "Lengkapi nilai target untung yang kamu pilih.",
       );
 
       return;
@@ -757,13 +757,13 @@ export function PlanAdsForm() {
                   )
                 }
                 placeholder="Rp80.000"
-                helperText="Modal produk untuk satu unit."
+                helperText="Modal untuk satu barang."
                 required
               />
 
               <CurrencyInput
                 id="list-price"
-                label="Harga Normal"
+                label="Harga jual"
                 value={
                   listPrice
                 }
@@ -1087,7 +1087,7 @@ function InitialSummary() {
 
       <div className="mt-5 space-y-4 text-sm">
         <SummaryItem
-          title="Profit sebelum iklan"
+          title="Untung sebelum iklan"
           description="Sisa setelah modal, fee, dan biaya."
         />
 
@@ -1098,7 +1098,7 @@ function InitialSummary() {
 
         <SummaryItem
           title="Minimum ROAS Aman"
-          description="Berdasarkan target profit yang kamu pilih."
+          description="Berdasarkan target untung yang kamu pilih."
         />
       </div>
 
@@ -1139,7 +1139,7 @@ function getValidationMessage(
 ): string {
   switch (code) {
     case "LIST_PRICE_INVALID":
-      return "Harga Normal harus lebih besar dari Rp0.";
+      return "Harga jual harus lebih besar dari Rp0.";
 
     case "HPP_INVALID":
       return "Modal / HPP tidak boleh bernilai negatif.";
@@ -1148,7 +1148,7 @@ function getValidationMessage(
       return "Diskon atau voucher tidak boleh bernilai negatif.";
 
     case "DISCOUNT_EXCEEDS_PRICE":
-      return "Diskon produk tidak boleh lebih besar dari Harga Normal.";
+      return "Diskon produk tidak boleh lebih besar dari harga jual.";
 
     case "EFFECTIVE_PRICE_NON_POSITIVE":
       return "Total diskon dan voucher membuat harga efektif menjadi Rp0 atau negatif.";
@@ -1166,10 +1166,10 @@ function getValidationMessage(
       return "Biaya operasional tidak valid.";
 
     case "TARGET_AMOUNT_INVALID":
-      return "Target profit Rupiah tidak valid.";
+      return "Target untung dalam Rupiah tidak valid.";
 
     case "TARGET_RATE_INVALID":
-      return "Persentase target profit tidak valid.";
+      return "Persentase target untung tidak valid.";
 
     default:
       return "Ada data yang belum valid. Periksa kembali angka yang kamu masukkan.";

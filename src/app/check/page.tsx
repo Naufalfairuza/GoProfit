@@ -1,3 +1,4 @@
+import { HowToUseDialog } from "@/components/ui/HowToUseDialog";
 import { CheckAdsForm } from "@/features/check-ads/components/CheckAdsForm";
 
 export default function CheckAdsPage() {
@@ -9,17 +10,18 @@ export default function CheckAdsPage() {
         </p>
 
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.05em] md:text-4xl">
-          Iklanmu benar-benar profit?
+          Iklanmu masih menghasilkan untung?
         </h1>
 
         <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--gp-text-secondary)] md:text-base">
-          Masukkan ekonomi produk
-          dan hasil campaign.
-          GOProfit membantu melihat
-          profit setelah biaya
-          iklan, bukan hanya ROAS
+          Masukkan angka produk dan hasil iklan dari Shopee. GOProfit membantu
+          melihat apakah masih ada untung setelah semua biaya, bukan hanya ROAS
           yang terlihat bagus.
         </p>
+
+        <div className="mt-4">
+          <HowToUseDialog variant="check" />
+        </div>
       </div>
 
       <CheckAdsForm />

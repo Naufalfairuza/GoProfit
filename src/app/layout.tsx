@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | GOProfit",
   },
   description:
-    "Hitung profit, fee, dan batas ROAS berdasarkan ekonomi produkmu.",
+    "Hitung untung, biaya, dan batas ROAS berdasarkan angka produkmu.",
 };
 
 export default function RootLayout({

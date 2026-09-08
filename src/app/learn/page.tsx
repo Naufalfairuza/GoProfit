@@ -8,11 +8,11 @@ export default function LearnPage() {
           Learn
         </p>
         <h1 className="mt-2 text-3xl font-bold tracking-[-0.05em] md:text-4xl">
-          Baca angka iklan dengan konteks profit
+          Pahami hasil iklan dengan bahasa sederhana
         </h1>
         <p className="mt-3 text-sm leading-6 text-[var(--gp-text-secondary)] md:text-base">
-          ROAS yang tinggi belum tentu berarti produkmu menghasilkan uang. Di
-          bawah ini cara GOProfit membaca ekonomi per order.
+          ROAS yang tinggi belum tentu berarti produkmu untung. Di bawah ini
+          penjelasan angka-angka penting sebelum kamu menambah budget iklan.
         </p>
       </div>
 
@@ -20,38 +20,38 @@ export default function LearnPage() {
         <LearnCard
           number="01"
           title="ROAS"
-          description="Revenue dari iklan dibagi biaya iklan. ROAS membantu membaca efisiensi iklan, tetapi belum memasukkan HPP, fee marketplace, dan biaya operasional."
-          formula="ROAS = GMV dari Ads ÷ Ad Spend"
+          description="Penjualan dari iklan dibagi biaya iklan. ROAS menunjukkan hasil iklan, tetapi belum menghitung modal dan biaya lain."
+          formula="ROAS = Penjualan dari iklan ÷ Biaya iklan"
         />
         <LearnCard
           number="02"
           title="ROAS BEP"
-          description="Batas ROAS ketika contribution sebelum iklan habis untuk membayar iklan. Di bawah angka ini, produk diperkirakan merugi."
-          formula="ROAS BEP = Harga efektif ÷ Contribution sebelum iklan"
+          description="Batas ROAS saat sisa uang dari penjualan habis untuk membayar iklan. Di bawah angka ini, produk berpotensi rugi."
+          formula="ROAS BEP = Harga efektif ÷ Sisa sebelum iklan"
         />
         <LearnCard
           number="03"
           title="Minimum ROAS Aman"
-          description="Batas bawah target ROAS untuk tetap menyisakan target profit yang kamu pilih per order. Jika target diatur lebih rendah, profit masih bisa positif, tetapi berpotensi berada di bawah target."
-          formula="Minimum ROAS = Harga efektif ÷ (Contribution − Target profit)"
+          description="ROAS terendah agar setelah semua biaya dan iklan dibayar, target untung per pesanan masih tersisa."
+          formula="Minimum ROAS = Harga efektif ÷ (Sisa sebelum iklan − Target untung)"
         />
         <LearnCard
           number="04"
-          title="Economic ROAS"
-          description="Versi ROAS yang memakai seluruh biaya iklan, termasuk biaya campaign tambahan di luar media ad spend."
-          formula="Economic ROAS = GMV dari Ads ÷ Total biaya iklan"
+          title="ROAS setelah semua biaya"
+          description="ROAS yang menghitung semua biaya iklan, termasuk biaya iklan tambahan."
+          formula="ROAS setelah semua biaya = Penjualan dari iklan ÷ Total biaya iklan"
         />
         <LearnCard
           number="05"
-          title="Reported ACOS"
-          description="Persentase media ad spend dibanding GMV yang dilaporkan Ads. Angka ini berguna untuk membaca laporan marketplace, tetapi belum menggambarkan seluruh biaya iklan."
-          formula="Reported ACOS = Media ad spend ÷ GMV Ads"
+          title="ACOS dari Shopee"
+          description="Persentase biaya iklan utama dibanding penjualan dari iklan. Ini biasanya angka yang terlihat di dashboard Shopee."
+          formula="ACOS dari Shopee = Biaya iklan utama ÷ Penjualan dari iklan"
         />
         <LearnCard
           number="06"
-          title="Economic ACOS"
-          description="Persentase seluruh biaya iklan dibanding GMV Ads. Gunakan ini ketika ada biaya tambahan di luar media ad spend."
-          formula="Economic ACOS = Total biaya iklan ÷ GMV Ads"
+          title="ACOS setelah semua biaya"
+          description="Persentase seluruh biaya iklan dibanding penjualan dari iklan. Angka ini juga memasukkan biaya iklan tambahan."
+          formula="ACOS setelah semua biaya = Total biaya iklan ÷ Penjualan dari iklan"
         />
         <LearnCard
           number="07"
@@ -62,7 +62,7 @@ export default function LearnPage() {
         <LearnCard
           number="08"
           title="CPA"
-          description="Rata-rata biaya iklan untuk mendapatkan satu order. CPA membantu membandingkan biaya akuisisi dengan profit per order."
+          description="Rata-rata biaya iklan untuk mendapatkan satu pesanan. Bandingkan dengan untung per pesanan."
           formula="CPA = Total biaya iklan ÷ Order"
         />
       </div>
@@ -75,21 +75,21 @@ export default function LearnPage() {
           Pilih arah iklan berdasarkan tujuanmu
         </h2>
         <p className="mt-2 text-sm leading-6 text-[var(--gp-text-secondary)]">
-          GOProfit membantu menghitung batas ekonomi. Pilihan mode bidding tetap
-          dilakukan di Shopee Ads.
+          GOProfit membantu menghitung batas biaya iklan. Pengaturan iklannya
+          tetap dilakukan di Shopee Ads.
         </p>
 
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           <LearnCard
             number="A"
             title="GMV Max ROAS"
-            description="Pilih ketika kamu ingin menetapkan target ROAS. Bandingkan Minimum ROAS Aman atau ROAS BEP dari GOProfit dengan rekomendasi Shopee dan riwayat produk."
+            description="Pilih jika ingin memasukkan target ROAS. Bandingkan angka dari GOProfit dengan rekomendasi Shopee dan hasil iklan sebelumnya."
             formula="Tujuan: menjaga efisiensi sesuai target"
           />
           <LearnCard
             number="B"
             title="GMV Max Auto"
-            description="Pilih ketika kamu ingin sistem Shopee mengoptimalkan strategi secara otomatis. Evaluasi hasil akhirnya dengan Economic ROAS dan Estimated Profit After Ads."
+            description="Pilih jika ingin Shopee mengatur strategi secara otomatis. Setelah berjalan, cek ROAS setelah semua biaya dan untung setelah iklan."
             formula="Tujuan: eksplorasi dan optimasi otomatis"
           />
         </div>

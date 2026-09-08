@@ -1,3 +1,4 @@
+import { HowToUseDialog } from "@/components/ui/HowToUseDialog";
 import { PlanAdsForm } from "@/features/plan-ads/components/PlanAdsForm";
 
 export default function PlanPage() {
@@ -13,9 +14,13 @@ export default function PlanPage() {
         </h1>
 
         <p className="mt-3 text-sm leading-6 text-[var(--gp-text-secondary)] md:text-base">
-          Masukkan angka produkmu untuk mengetahui batas ekonomi iklan sebelum
+          Masukkan angka produkmu untuk mengetahui batas biaya iklan sebelum
           campaign dijalankan.
         </p>
+
+        <div className="mt-4">
+          <HowToUseDialog variant="plan" />
+        </div>
       </div>
 
       <PlanAdsForm />

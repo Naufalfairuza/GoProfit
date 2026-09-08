@@ -39,11 +39,11 @@ export function CheckAdsResultPanel({
     <div className="space-y-5">
       <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
         <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
-          Estimated Result
+          Perkiraan hasil
         </p>
 
         <p className="mt-4 text-xs font-semibold text-[var(--gp-text-secondary)]">
-          Estimated Profit After Ads
+          Perkiraan untung setelah iklan
         </p>
 
         <p
@@ -66,7 +66,7 @@ export function CheckAdsResultPanel({
             {formatMoney(
               result.estimatedProfitPerOrder,
             )}{" "}
-            estimasi profit / order
+            perkiraan untung / pesanan
           </p>
         )}
 
@@ -78,28 +78,28 @@ export function CheckAdsResultPanel({
 
         <div className="mt-5 grid grid-cols-2 gap-3">
           <MetricCard
-            label="Reported ROAS"
+            label="ROAS dari Shopee"
             value={formatRoas(
               result.reportedRoas,
             )}
           />
 
           <MetricCard
-            label="Economic ROAS"
+            label="ROAS setelah semua biaya"
             value={formatRoas(
               result.economicRoas,
             )}
           />
 
           <MetricCard
-            label="Economic ACOS"
+            label="ACOS setelah semua biaya"
             value={formatBps(
               result.economicAcosBps,
             )}
           />
 
           <MetricCard
-            label="CPA"
+            label="Biaya / pesanan (CPA)"
             value={formatOptionalMoney(
               result.cpa,
             )}
@@ -111,19 +111,14 @@ export function CheckAdsResultPanel({
         {hasAdditionalAdCost && (
           <div className="mt-4 rounded-xl bg-[var(--gp-brand-soft)] p-4">
             <p className="text-xs font-semibold">
-              Economic ROAS lebih
-              relevan untuk profit
+              ROAS setelah semua biaya lebih
+              relevan untuk melihat untung
             </p>
 
             <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
-              Ada biaya iklan
-              tambahan di luar media
-              ad spend. Karena itu
-              Economic ROAS
-              memasukkan seluruh
-              biaya iklan, bukan
-              hanya angka spend yang
-              dilaporkan marketplace.
+              Ada biaya iklan tambahan di luar biaya iklan utama. Karena itu,
+              ROAS setelah semua biaya memasukkan seluruh biaya iklan, bukan
+              hanya angka yang dilaporkan Shopee.
             </p>
           </div>
         )}
@@ -131,13 +126,13 @@ export function CheckAdsResultPanel({
 
       <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
         <SectionHeading
-          eyebrow="Facts"
-          title="Apa yang terjadi?"
+          eyebrow="Ringkasan"
+          title="Hasilnya bagaimana?"
         />
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           <FactTile
-            label="Contribution sebelum iklan"
+            label="Sisa sebelum iklan"
             value={formatMoney(
               result.breakdown
                 .contributionBeforeAds,
@@ -152,7 +147,7 @@ export function CheckAdsResultPanel({
           />
 
           <FactTile
-            label="Estimated profit setelah iklan"
+            label="Perkiraan untung setelah iklan"
             value={formatMoney(
               result.estimatedProfitAfterAds,
             )}
@@ -162,7 +157,7 @@ export function CheckAdsResultPanel({
           {result.targetProfitTotal !==
             undefined && (
             <FactTile
-              label="Target profit total"
+              label="Target untung total"
               value={formatMoney(
                 result.targetProfitTotal,
               )}
@@ -170,28 +165,28 @@ export function CheckAdsResultPanel({
           )}
 
           <FactTile
-            label="Reported ACOS"
+            label="ACOS dari Shopee"
             value={formatBps(
               result.reportedAcosBps,
             )}
           />
 
           <FactTile
-            label="Economic ACOS"
+            label="ACOS setelah semua biaya"
             value={formatBps(
               result.economicAcosBps,
             )}
           />
 
           <FactTile
-            label="CPC"
+            label="Biaya / klik (CPC)"
             value={formatOptionalMoney(
               result.cpc,
             )}
           />
 
           <FactTile
-            label="CPA"
+            label="Biaya / pesanan (CPA)"
             value={formatOptionalMoney(
               result.cpa,
             )}
@@ -201,8 +196,8 @@ export function CheckAdsResultPanel({
 
       <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
         <SectionHeading
-          eyebrow="Diagnosis"
-          title="Kenapa hasilnya seperti ini?"
+          eyebrow="Kesimpulan"
+          title="Apa artinya untuk iklanmu?"
         />
 
         <p className="mt-4 text-sm leading-6 text-[var(--gp-text-secondary)]">
@@ -211,7 +206,7 @@ export function CheckAdsResultPanel({
 
         <div className="mt-5 rounded-xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
           <p className="text-xs font-bold uppercase tracking-[0.06em] text-[var(--gp-brand-primary)]">
-            Action
+            Saran berikutnya
           </p>
 
           <p className="mt-2 text-sm font-semibold leading-6 text-[var(--gp-text-primary)]">
@@ -229,13 +224,9 @@ export function CheckAdsResultPanel({
           />
 
           <p className="mt-2 text-xs leading-5 text-[var(--gp-text-secondary)]">
-            Catatan ini tidak
-            otomatis berarti
-            campaign salah. Gunakan
-            untuk memastikan data
-            yang dibandingkan memang
-            berasal dari scope yang
-            sama.
+            Catatan ini tidak otomatis berarti campaign salah. Gunakan untuk
+            memastikan data yang dibandingkan berasal dari periode dan produk
+            yang sama.
           </p>
 
           <div className="mt-5 space-y-3">
@@ -258,14 +249,14 @@ export function CheckAdsResultPanel({
 
       <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
         <SectionHeading
-          eyebrow="Breakdown"
-          title="Dari mana profitnya?"
+          eyebrow="Rincian biaya"
+          title="Dari mana untungnya?"
         />
 
         <div className="mt-5 space-y-5">
           <div>
             <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--gp-text-muted)]">
-              Ekonomi produk
+              Angka produk
             </p>
 
             <div className="grid gap-3 sm:grid-cols-2">
@@ -279,7 +270,7 @@ export function CheckAdsResultPanel({
               />
 
               <BreakdownTile
-                label="HPP"
+                label="Modal / HPP"
                 value={`-${formatMoneyPositive(
                   result.breakdown.hpp,
                 )}`}
@@ -287,7 +278,7 @@ export function CheckAdsResultPanel({
               />
 
               <BreakdownTile
-                label="Marketplace fee"
+                label="Fee Shopee"
                 value={`-${formatMoneyPositive(
                   result.breakdown
                     .fees.total,
@@ -313,7 +304,7 @@ export function CheckAdsResultPanel({
 
             <div className="grid gap-3 sm:grid-cols-2">
               <BreakdownTile
-                label="Contribution sebelum iklan"
+                label="Sisa sebelum iklan"
                 value={formatMoney(
                   result.breakdown
                     .contributionBeforeAds,
@@ -333,7 +324,7 @@ export function CheckAdsResultPanel({
 
           <div className="rounded-2xl border border-[var(--gp-brand-primary)]/20 bg-[var(--gp-brand-soft)] p-4">
             <p className="text-xs font-semibold text-[var(--gp-text-secondary)]">
-              Estimated Profit After Ads
+              Perkiraan untung setelah iklan
             </p>
             <p
               className={[
@@ -349,19 +340,15 @@ export function CheckAdsResultPanel({
               )}
             </p>
             <p className="mt-1 text-[11px] leading-5 text-[var(--gp-text-secondary)]">
-              Sisa setelah pendapatan dikurangi HPP, fee, biaya operasional, dan biaya iklan.
+              Sisa setelah penjualan dikurangi modal, biaya Shopee, biaya operasional, dan biaya iklan.
             </p>
           </div>
         </div>
 
         <p className="mt-5 text-[11px] leading-5 text-[var(--gp-text-muted)]">
-          Estimated Profit After
-          Ads adalah estimasi dari
-          data yang kamu masukkan,
-          bukan laporan laba bersih
-          akuntansi dan bukan
-          jaminan performa campaign
-          berikutnya.
+          Perkiraan untung ini dihitung dari angka yang kamu masukkan.
+          Hasilnya bukan laporan akuntansi dan bukan jaminan campaign
+          berikutnya akan sama.
         </p>
       </section>
     </div>
@@ -419,27 +406,27 @@ function MetricCard({
 function MetricGlossary() {
   const metrics = [
     {
-      name: "Reported ACOS",
+      name: "ACOS dari Shopee",
       description:
-        "Persentase media ad spend dibanding GMV yang dilaporkan dari Ads. Ini angka yang biasanya terlihat di dashboard marketplace.",
+        "Persentase biaya iklan utama dibanding penjualan yang berasal dari iklan. Ini biasanya angka yang terlihat di dashboard Shopee.",
       formula: "Media ad spend ÷ GMV Ads",
     },
     {
-      name: "Economic ACOS",
+      name: "ACOS setelah semua biaya",
       description:
-        "Persentase seluruh biaya iklan dibanding GMV Ads. Angka ini memasukkan biaya iklan tambahan yang kamu input.",
+        "Persentase seluruh biaya iklan dibanding penjualan dari iklan. Angka ini juga memasukkan biaya iklan tambahan.",
       formula: "Total biaya iklan ÷ GMV Ads",
     },
     {
       name: "CPC",
       description:
-        "Rata-rata biaya untuk satu klik. Jika klik kosong atau 0, CPC tidak bisa dihitung.",
+        "Rata-rata biaya untuk mendapatkan satu klik. Jika klik kosong atau 0, angka ini belum bisa dihitung.",
       formula: "Total biaya iklan ÷ klik",
     },
     {
       name: "CPA",
       description:
-        "Rata-rata biaya iklan untuk mendapatkan satu order. Jika order 0, CPA tidak tersedia.",
+        "Rata-rata biaya iklan untuk mendapatkan satu pesanan. Bandingkan dengan untung per pesanan.",
       formula: "Total biaya iklan ÷ order",
     },
   ];
@@ -455,11 +442,11 @@ function MetricGlossary() {
         </span>
         <div>
           <p className="text-sm font-bold text-[var(--gp-text-primary)]">
-            Cara membaca metrik
+            Arti angka-angka ini
           </p>
           <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
-            Tidak semua angka menjawab pertanyaan yang sama. Gunakan definisi
-            ini sebelum mengambil keputusan dari hasil campaign.
+            Setiap angka punya arti berbeda. Baca penjelasan ini sebelum
+            memutuskan apakah budget iklan perlu ditambah.
           </p>
         </div>
       </div>
@@ -614,16 +601,16 @@ function getDiagnosisContent(
     case "LOSS":
       return {
         eyebrow:
-          "Campaign Loss",
+          "Berpotensi rugi",
 
         title:
-          "Biaya iklan lebih besar dari contribution yang tersedia.",
+          "Iklan berpotensi membuat produk rugi.",
 
         description:
-          "Setelah HPP, fee, biaya operasional, dan biaya iklan dihitung, campaign menghasilkan estimasi profit negatif. ROAS yang terlihat di marketplace tidak boleh digunakan sendiri untuk menyimpulkan campaign ini menguntungkan.",
+          "Setelah modal, biaya Shopee, biaya operasional, dan biaya iklan dihitung, sisa uangnya menjadi negatif. ROAS yang terlihat bagus di Shopee belum tentu berarti campaign menghasilkan untung.",
 
         action:
-          "Jangan menaikkan spend berdasarkan ROAS saja. Periksa CPA, biaya iklan, harga jual, fee, HPP, serta data atribusi sebelum memutuskan langkah berikutnya.",
+          "Jangan tambah budget dulu. Cek biaya iklan, harga jual, biaya Shopee, modal, dan data penjualan sebelum melanjutkan campaign.",
 
         tone:
           "danger",
@@ -632,16 +619,16 @@ function getDiagnosisContent(
     case "BREAK_EVEN":
       return {
         eyebrow:
-          "Break Even",
+          "Hampir tidak untung",
 
         title:
-          "Campaign berada tepat di sekitar titik impas.",
+          "Iklan hanya menutup biaya dan belum memberi untung.",
 
         description:
-          "Contribution produk saat ini habis untuk menutup biaya iklan. Campaign belum memberikan ruang profit setelah seluruh biaya yang dimasukkan dihitung.",
+          "Sisa uang dari penjualan habis untuk membayar biaya iklan. Setelah semua biaya dihitung, campaign belum memberi untung yang berarti.",
 
         action:
-          "Cari ruang profit terlebih dahulu sebelum menaikkan spend, misalnya melalui CPA lebih rendah atau ekonomi produk yang lebih kuat.",
+          "Cari cara agar biaya iklan lebih rendah atau untung per produk lebih besar sebelum menambah budget.",
 
         tone:
           "warning",
@@ -650,16 +637,16 @@ function getDiagnosisContent(
     case "PROFITABLE":
       return {
         eyebrow:
-          "Profitable",
+          "Masih berpotensi untung",
 
         title:
-          "Campaign menghasilkan estimasi profit positif.",
+          "Iklan masih berpotensi menghasilkan profit.",
 
         description:
-          "Contribution produk masih tersisa setelah biaya iklan dikurangi. Karena belum ada target profit, GOProfit hanya dapat menyatakan campaign menghasilkan estimasi profit positif.",
+          "Setelah modal, biaya Shopee, biaya operasional, dan iklan dibayar, masih ada sisa uang. Karena target untung belum diisi, hasil ini belum menilai apakah jumlahnya sudah cukup untuk bisnis kamu.",
 
         action:
-          "Tentukan target profit jika kamu ingin menilai apakah campaign bukan hanya profit, tetapi juga memenuhi standar profit tokomu.",
+          "Isi target untung jika kamu ingin tahu apakah hasil campaign sudah cukup sesuai target tokomu.",
 
         tone:
           "success",
@@ -668,16 +655,16 @@ function getDiagnosisContent(
     case "BELOW_TARGET":
       return {
         eyebrow:
-          "Below Target",
+          "Untung di bawah target",
 
         title:
-          "Campaign profit, tetapi target profit belum tercapai.",
+          "Iklan masih menghasilkan untung, tapi belum sesuai target.",
 
         description:
-          "Campaign masih menghasilkan estimasi profit positif, tetapi jumlahnya berada di bawah target yang kamu tentukan. Jadi profitable belum tentu berarti target bisnis sudah terpenuhi.",
+          "Campaign masih menghasilkan sisa uang positif, tetapi jumlahnya lebih kecil dari target untung yang kamu masukkan. Jadi masih untung belum tentu target bisnis sudah tercapai.",
 
         action:
-          "Fokus pada selisih terhadap target. Evaluasi CPA, total biaya iklan, fee, serta harga jual sebelum meningkatkan spend.",
+          "Cek selisih terhadap target. Evaluasi biaya per pesanan, total biaya iklan, fee, dan harga jual sebelum menambah budget.",
 
         tone:
           "warning",
@@ -686,16 +673,16 @@ function getDiagnosisContent(
     case "TARGET_MET":
       return {
         eyebrow:
-          "Target Met",
+          "Target tercapai",
 
         title:
-          "Estimasi profit sudah memenuhi target yang kamu tentukan.",
+          "Iklan masih menyisakan target untungmu.",
 
         description:
-          "Setelah HPP, fee, biaya operasional, dan biaya iklan dihitung, estimated profit masih sama dengan atau lebih besar dari target profit.",
+          "Setelah modal, biaya Shopee, biaya operasional, dan biaya iklan dibayar, perkiraan untung masih sama dengan atau lebih besar dari targetmu.",
 
         action:
-          "Jika ingin meningkatkan spend, lakukan bertahap dan hitung ulang setelah biaya atau performa berubah. Status ini bukan jaminan hasil campaign berikutnya.",
+          "Kalau ingin menambah budget, lakukan sedikit demi sedikit dan cek ulang hasilnya. Campaign berikutnya belum tentu menghasilkan angka yang sama.",
 
         tone:
           "success",
@@ -713,71 +700,71 @@ function getWarningContent(
     case "GMV_UNIT_ECONOMICS_MISMATCH":
       return {
         title:
-          "GMV Ads berbeda dari ekonomi unit yang dihitung",
+          "Penjualan dari Ads berbeda dari hitungan produk",
 
         description:
-          "GMV atribusi marketplace tidak sama dengan pendapatan efektif berdasarkan harga, potongan, dan jumlah unit yang kamu masukkan. Pastikan periode, produk, unit terjual, harga, diskon, dan voucher berasal dari scope campaign yang sama.",
+          "Angka penjualan dari Ads tidak sama dengan hitungan berdasarkan harga, potongan, dan jumlah barang yang kamu masukkan. Pastikan periode, produk, jumlah barang, harga, diskon, dan voucher yang dibandingkan sama.",
       };
 
     case "USING_PRESET_FEE":
       return {
         title:
-          "Perhitungan menggunakan fee preset",
+          "Fee yang dipakai masih fee contoh",
 
         description:
-          "Pastikan fee preset masih sesuai dengan biaya yang benar-benar dikenakan pada tokomu.",
+          "Cek apakah fee contoh ini sama dengan biaya yang benar-benar dikenakan pada tokomu.",
       };
 
     case "NO_CLICKS":
       return {
         title:
-          "CPC tidak dapat dihitung",
+          "CPC belum bisa dihitung",
 
         description:
-          "Jumlah klik adalah 0, sehingga biaya per klik tidak memiliki denominator yang dapat digunakan.",
+          "Jumlah klik masih 0, jadi biaya rata-rata untuk satu klik belum bisa dihitung.",
       };
 
     case "NO_ORDERS":
       return {
         title:
-          "CPA dan profit per order tidak dapat dihitung",
+          "CPA dan untung per pesanan belum bisa dihitung",
 
         description:
-          "Jumlah order adalah 0. GOProfit tetap dapat menghitung metrik campaign lain yang denominaturnya tersedia.",
+          "Jumlah pesanan masih 0. Angka lain tetap bisa dihitung jika datanya tersedia.",
       };
 
     case "NO_MEDIA_AD_SPEND":
       return {
         title:
-          "Media ad spend adalah Rp0",
+          "Biaya iklan utama masih Rp0",
 
         description:
-          "Reported ROAS tidak dapat dihitung dari media ad spend sebesar Rp0. Jika ada biaya iklan lain, Economic ROAS masih dapat berbeda.",
+          "ROAS dari Shopee belum bisa dihitung karena biaya iklan utama masih Rp0. Jika ada biaya iklan lain, ROAS setelah semua biaya bisa tetap berbeda.",
       };
 
     case "ATTRIBUTED_DATA_ESTIMATE":
       return {
         title:
-          "GMV merupakan data atribusi",
+          "Penjualan ini adalah hasil atribusi Ads",
 
         description:
-          "GMV dari Ads mengikuti atribusi marketplace dan tidak otomatis sama dengan pendapatan final yang telah direkonsiliasi secara akuntansi.",
+          "Penjualan dari Ads mengikuti cara Shopee mengatribusikan pesanan. Angka ini belum tentu sama dengan pendapatan akhir setelah semua pesanan dicek.",
       };
 
     case "MULTI_UNIT_ORDER_ESTIMATE":
       return {
         title:
-          "Orders dan units sold berbeda",
+          "Jumlah pesanan dan barang berbeda",
 
         description:
-          "Satu order dapat berisi lebih dari satu unit. GOProfit menghitung biaya PER_UNIT dan PER_ORDER sesuai scope masing-masing, sehingga hasilnya merupakan estimasi berdasarkan angka yang kamu masukkan.",
+          "Satu pesanan bisa berisi lebih dari satu barang. Karena itu, biaya per barang dan per pesanan dihitung berbeda. Hasil GOProfit tetap berupa perkiraan dari angka yang kamu masukkan.",
       };
 
     case "LIVE_ATTRIBUTION_ESTIMATE":
       return {
-        title: "Atribusi Shopee Live belum dirinci",
+        title: "Penjualan Shopee Live belum dirinci",
         description:
-          "Input orders dan units dari Shopee Live belum tersedia, sehingga GOProfit menganggap seluruh orders dan units sebagai penjualan Live. Isi atribusi Live agar biaya Live XTRA tidak terlalu besar.",
+          "Jumlah pesanan dan barang dari Shopee Live belum diisi. Untuk sementara GOProfit menganggap semuanya berasal dari Live. Isi angka Live agar biaya Live XTRA tidak terlalu besar.",
       };
   }
 }

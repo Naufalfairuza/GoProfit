@@ -6,7 +6,7 @@ export default function HomePage() {
       <section className="mx-auto grid max-w-[1180px] gap-12 px-4 py-16 md:grid-cols-[1.05fr_0.95fr] md:items-center md:px-6 md:py-24">
         <div>
           <div className="mb-5 inline-flex rounded-full border border-[var(--gp-border)] bg-white px-3 py-1.5 text-xs font-semibold text-[var(--gp-text-secondary)]">
-            Profit & Ads Intelligence untuk Seller
+            Hitung Untung & Iklan untuk Seller
           </div>
 
           <h1 className="max-w-[680px] text-4xl font-bold leading-[1.1] tracking-[-0.045em] text-[var(--gp-text-primary)] md:text-6xl">
@@ -17,8 +17,8 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-6 max-w-[610px] text-base leading-7 text-[var(--gp-text-secondary)] md:text-lg">
-            Hitung profit produk, biaya marketplace, ROAS impas, dan target
-            ROAS berdasarkan angka bisnismu sendiri — bukan tebakan seller lain.
+            Hitung untung produk, biaya Shopee, batas agar tidak rugi, dan target
+            ROAS berdasarkan angka bisnismu sendiri.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -55,7 +55,7 @@ export default function HomePage() {
               </div>
 
               <span className="rounded-full bg-[var(--gp-success-soft)] px-3 py-1 text-xs font-bold text-[var(--gp-success)]">
-                TARGET FEASIBLE
+                TARGET TERCAPAI
               </span>
             </div>
 
@@ -69,22 +69,22 @@ export default function HomePage() {
               </div>
 
               <p className="mt-3 text-sm leading-6 text-[var(--gp-text-secondary)]">
-                Untuk mempertahankan target profit Rp25.000 per order.
+                Untuk menyisakan target untung Rp25.000 per pesanan.
               </p>
             </div>
 
             <div className="mt-5 grid grid-cols-2 gap-3">
               <Metric label="ROAS BEP" value="2,74" />
-              <Metric label="Max Ads / Order" value="Rp29.750" />
+              <Metric label="Maks. biaya iklan / pesanan" value="Rp29.750" />
             </div>
 
             <div className="mt-6">
               <div className="mb-2 flex justify-between text-xs font-semibold">
-                <span className="text-[var(--gp-danger)]">LOSS</span>
+                <span className="text-[var(--gp-danger)]">RUGI</span>
                 <span className="text-[var(--gp-warning)]">
-                  BELOW TARGET
+                  DI BAWAH TARGET
                 </span>
-                <span className="text-[var(--gp-success)]">TARGET</span>
+                <span className="text-[var(--gp-success)]">TARGET TERCAPAI</span>
               </div>
 
               <div className="grid grid-cols-[35fr_35fr_30fr] overflow-hidden rounded-full">
@@ -106,13 +106,13 @@ export default function HomePage() {
           <Feature
             number="01"
             title="Hitung sebelum beriklan"
-            description="Cari tahu ROAS impas dan batas biaya iklan dari HPP, harga, fee, dan target profit."
+            description="Cari tahu batas agar tidak rugi dan biaya iklan yang masih aman."
           />
 
           <Feature
             number="02"
             title="Cek setelah iklan berjalan"
-            description="Lihat apakah campaign benar-benar menghasilkan estimasi profit setelah biaya iklan."
+            description="Lihat apakah iklan masih menghasilkan untung setelah semua biaya."
           />
 
           <Feature
