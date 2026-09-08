@@ -44,6 +44,7 @@ import type {
 import { BrowserScenarioRepository } from "@/services/persistence/browser-scenario.repository";
 
 import { CheckAdsResultPanel } from "./CheckAdsResultPanel";
+import { ShopeeValidationPanel } from "./ShopeeValidationPanel";
 
 import { FeeAndCostSection } from "@/features/plan-ads/components/FeeAndCostSection";
 import { TargetProfitSection } from "@/features/plan-ads/components/TargetProfitSection";
@@ -1463,6 +1464,13 @@ export function CheckAdsForm() {
       <AnimatedResult>
         <section className="mx-auto mt-8 max-w-[1180px]">
           <CheckAdsResultPanel result={result} input={calculatedInput} />
+          <div className="mt-5">
+            <ShopeeValidationPanel
+              key={`${result.estimatedProfitAfterAds}:${result.totalAdvertisingCost}:${calculatedInput.campaign.attributedGmv}:${calculatedInput.campaign.orders}:${calculatedInput.campaign.unitsSold}`}
+              result={result}
+              input={calculatedInput}
+            />
+          </div>
           <div className="mt-4 max-w-[360px]">
             <SaveCalculationButton
               kind="CHECK"
