@@ -76,6 +76,11 @@ function TargetFeasibleResult({
             label="Maks. biaya iklan / pesanan"
             value={formatMoney(result.maxAdsCostForTarget)}
           />
+
+          <MetricCard
+            label="Untung sebelum iklan"
+            value={formatMoney(result.breakdown.contributionBeforeAds)}
+          />
         </div>
 
         <PlanMetricGuide
@@ -200,6 +205,11 @@ function BreakEvenResult({
           <MetricCard
             label="Maks. biaya iklan / pesanan"
             value={formatMoney(result.maxAdsCostAtBreakEven)}
+          />
+
+          <MetricCard
+            label="Untung sebelum iklan"
+            value={formatMoney(result.breakdown.contributionBeforeAds)}
           />
         </div>
 
@@ -388,10 +398,18 @@ function FinancialBreakdown({
   const breakdown = result.breakdown;
 
   return (
-    <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
-      <h3 className="text-base font-bold">
-        Rincian hitungan
-      </h3>
+    <details className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-bold text-[var(--gp-text-primary)]">
+        <span>Lihat detail perhitungan</span>
+        <span aria-hidden="true" className="text-xl font-normal text-[var(--gp-text-secondary)]">
+          +
+        </span>
+      </summary>
+
+      <div className="border-t border-[var(--gp-border)] p-5">
+        <h3 className="text-base font-bold">
+          Rincian hitungan
+        </h3>
 
       <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
         Dari harga jual sampai sisa untung sebelum iklan.
@@ -467,7 +485,8 @@ function FinancialBreakdown({
           />
         </div>
       </div>
-    </section>
+      </div>
+    </details>
   );
 }
 
@@ -541,24 +560,26 @@ function PlanMetricGuide({
   }>;
 }) {
   return (
-    <section className="mt-5 rounded-2xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)] p-4">
-      <div className="flex items-start gap-3">
-        <span
-          aria-hidden="true"
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--gp-brand-soft)] text-xs font-bold text-[var(--gp-brand-primary)]"
-        >
-          i
-        </span>
+    <details className="mt-5 rounded-2xl border border-[var(--gp-border)] bg-[var(--gp-surface-soft)]">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-4">
         <div>
           <p className="text-sm font-bold text-[var(--gp-text-primary)]">
-            Arti angka-angka ini
+            Lihat arti angka dan rumus
           </p>
           <p className="mt-1 text-xs leading-5 text-[var(--gp-text-secondary)]">
-            Gunakan angka ini untuk menentukan apakah iklan masih masuk akal,
-            bukan hanya untuk melihat skor dari marketplace.
+            Buka bagian ini jika ingin tahu cara membaca hasilnya.
           </p>
         </div>
-      </div>
+        <span aria-hidden="true" className="text-xl font-normal text-[var(--gp-text-secondary)]">
+          +
+        </span>
+      </summary>
+
+      <div className="border-t border-[var(--gp-border)] p-4">
+        <p className="text-xs leading-5 text-[var(--gp-text-secondary)]">
+          Angka berikut membantu menjelaskan batas aman iklan, bukan hanya skor
+          dari marketplace.
+        </p>
 
       <div className="mt-4 space-y-3">
         {items.map((item) => (
@@ -578,7 +599,8 @@ function PlanMetricGuide({
           </article>
         ))}
       </div>
-    </section>
+      </div>
+    </details>
   );
 }
 
@@ -600,7 +622,15 @@ function ShopeeAdsDirection({
   const canAdvertise = result.status !== "NOT_ADS_FEASIBLE";
 
   return (
-    <section className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white p-5">
+    <details className="rounded-[var(--gp-radius-card)] border border-[var(--gp-border)] bg-white">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-bold text-[var(--gp-text-primary)]">
+        <span>Cara memakai hasil ini di Shopee</span>
+        <span aria-hidden="true" className="text-xl font-normal text-[var(--gp-text-secondary)]">
+          +
+        </span>
+      </summary>
+
+      <section className="border-t border-[var(--gp-border)] p-5">
       <p className="text-xs font-bold uppercase tracking-[0.08em] text-[var(--gp-brand-primary)]">
         Cara memakai hasil ini
       </p>
@@ -675,7 +705,8 @@ function ShopeeAdsDirection({
         </a>
         .
       </p>
-    </section>
+      </section>
+    </details>
   );
 }
 
